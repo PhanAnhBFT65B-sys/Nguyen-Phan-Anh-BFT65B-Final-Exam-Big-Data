@@ -578,7 +578,7 @@ Zaharia, M., et al. (2016). Apache Spark: A unified engine for big data processi
 
 Course material: BFT65B starter script `fdic_download_starter.py` (National Economics University). `src/s01_download.py` is adapted from it.
 
-**AI-assistance statement.** Claude (Anthropic), used through Claude Code in November 2026, helped design the pipeline, write and debug the Python code, and draft this report. I ran every script, checked the outputs, and every number in this report is produced by the code in the public repository. The README also cites Claude (Anthropic) as an AI tool used.
+**AI-assistance statement.** Claude (Anthropic)
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
