@@ -47,6 +47,7 @@ Set `FDIC_DATA_DIR=/some/path` to keep the data outside the repository folder.
 | Validation, threshold from costs, single test | `src/s08_model.py` | 5 | 4 min |
 | Spark MLlib demo (development fold only) | `src/s09_spark_mllib.py` | 5 | 1 min |
 | Bootstrap CI, publication-lag check, cover numbers | `src/s10_summary.py` | 5, 6 | 20 s |
+| Extra report figures (download profile, event study, importance, test by year) | `src/s11_report_figures.py` | 4, 5 | 15 s |
 
 Seeds are fixed (`config.SEED = 42`, `PYTHONHASHSEED=0` in benchmark subprocesses).
 
@@ -56,7 +57,7 @@ Seeds are fixed (`config.SEED = 42`, `PYTHONHASHSEED=0` in benchmark subprocesse
 src/config.py          paths, field list (38 Call Report fields + keys), periods, seed
 src/utils.py           timing and fresh-process memory measurement helpers
 src/bench_impl.py      the same transformations written in pandas and in Polars (for s05)
-src/s01 ... s10        pipeline steps (table above)
+src/s01 ... s11        pipeline steps (table above)
 tests/test_pipeline.py unit tests on a hand-made mini panel
 outputs/dq_report.md   generated data-quality report
 outputs/tables/        every number quoted in the report (CSV/JSON/plans)

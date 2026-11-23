@@ -14,7 +14,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent
 STEPS = ["s01_download", "s02_storage_benchmark", "s03_data_quality", "s04_build_panel",
-         "s05_benchmark", "s06_spark_demo", "s07_features", "s08_model", "s09_spark_mllib", "s10_summary"]
+         "s05_benchmark", "s06_spark_demo", "s07_features", "s08_model", "s09_spark_mllib", "s10_summary", "s11_report_figures"]
 SPARK = {"s06_spark_demo", "s09_spark_mllib"}
 
 ap = argparse.ArgumentParser()
