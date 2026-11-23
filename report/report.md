@@ -5,7 +5,7 @@ subtitle: "BFT65B – Big Data Analytics in Finance · Final Individual Research
 
 | | |
 |----------------------|------------------------------------------------------------------------------|
-| **Student** | Nguyễn Phan Anh — Student ID: `<fill in>` |
+| **Student** | Nguyễn Phan Anh — Student ID: 11230928 |
 | **GitHub repository (public)** | https://github.com/PhanAnhBFT65B-sys/Nguyen-Phan-Anh-BFT65B-Final-Exam-Big-Data |
 | **Download method** | FDIC BankFind public API (`api.fdic.gov/banks`), script `src/s01_download.py` (adapted from the course starter); resumable, verified against the API's own row totals |
 | **Download date** | 23 November 2026 (API index `risview_20261116221646`) |
@@ -578,7 +578,7 @@ Zaharia, M., et al. (2016). Apache Spark: A unified engine for big data processi
 
 Course material: BFT65B starter script `fdic_download_starter.py` (National Economics University). `src/s01_download.py` is adapted from it.
 
-**AI-assistance statement.** Claude (Anthropic), used through Claude Code in November 2026, helped design the pipeline, write and debug the Python code, and draft this report. I ran every script, checked the outputs, and every number in this report is produced by the code in the public repository. The same statement appears in the README.
+**AI-assistance statement.** Claude (Anthropic), used through Claude Code in November 2026, helped design the pipeline, write and debug the Python code, and draft this report. I ran every script, checked the outputs, and every number in this report is produced by the code in the public repository. The README also cites Claude (Anthropic) as an AI tool used.
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
