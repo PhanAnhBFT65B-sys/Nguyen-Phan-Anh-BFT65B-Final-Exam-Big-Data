@@ -6,7 +6,7 @@ subtitle: "BFT65B – Big Data Analytics in Finance · Final Individual Research
 | | |
 |----------------------|------------------------------------------------------------------------------|
 | **Student** | Nguyễn Phan Anh — Student ID: `<fill in>` |
-| **GitHub repository (public)** | `https://github.com/<your-account>/<repo-name>` |
+| **GitHub repository (public)** | https://github.com/PhanAnhBFT65B-sys/Nguyen-Phan-Anh-BFT65B-Final-Exam-Big-Data |
 | **Download method** | FDIC BankFind public API (`api.fdic.gov/banks`), script `src/s01_download.py` (adapted from the course starter); resumable, verified against the API's own row totals |
 | **Download date** | 23 November 2026 (API index `risview_20261116221646`) |
 | **Row counts** | Financials 1,682,738 bank-quarters (170 quarters, 1984Q1–2026Q2, 24,064 banks); Failures 4,117; Institutions 27,838; clean panel 1,681,643 |
