@@ -1,4 +1,4 @@
-# data are never committed (exam rule) - they are re-created by src/s01_download.py
+# data are never committed (exam rule) - they are re-created by code/s01_download.py
 data/
 data_*/
 *.parquet

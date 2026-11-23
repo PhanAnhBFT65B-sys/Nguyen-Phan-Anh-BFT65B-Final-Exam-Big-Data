@@ -23,7 +23,7 @@ import polars as pl
 import config as C
 from utils import run_isolated
 
-SRC = C.ROOT / "src"
+SRC = C.ROOT / "code"
 BASE_FILE = C.BENCH_DIR / "panel_zstd.parquet"
 
 

@@ -10,8 +10,8 @@ Changes made for this project (documented in the report, Part 1):
   * completeness verification against the API's own `meta.total` and the grand total.
 
 Usage
-    python src/s01_download.py --start 2023-03-31 --end 2023-12-31   # quick test (4 quarters)
-    python src/s01_download.py                                         # full 1984Q1-2026Q2
+    python code/s01_download.py --start 2023-03-31 --end 2023-12-31   # quick test (4 quarters)
+    python code/s01_download.py                                         # full 1984Q1-2026Q2
 """
 from __future__ import annotations
 

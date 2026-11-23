@@ -1,5 +1,5 @@
 {
- "download_method": "FDIC BankFind public API (api.fdic.gov/banks), src/s01_download.py",
+ "download_method": "FDIC BankFind public API (api.fdic.gov/banks), code/s01_download.py",
  "download_date_utc": "2026-11-23",
  "api_index": "risview_20261116221646",
  "financials_rows": 1682738,

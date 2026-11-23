@@ -31,7 +31,7 @@ for step in STEPS:
     print(f"=== {step} ===", flush=True)
     t0 = time.time()
     with open(logs / f"{step}.log", "w", encoding="utf-8") as fh:
-        p = subprocess.run([sys.executable, "-W", "ignore", f"src/{step}.py"], cwd=ROOT,
+        p = subprocess.run([sys.executable, "-W", "ignore", f"code/{step}.py"], cwd=ROOT,
                            stdout=fh, stderr=subprocess.STDOUT)
     print(f"    exit {p.returncode} in {time.time() - t0:,.0f}s  (log: outputs/logs/{step}.log)", flush=True)
     if p.returncode != 0:

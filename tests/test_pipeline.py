@@ -19,7 +19,7 @@ import pytest
 
 TMP = Path(tempfile.mkdtemp())
 os.environ["FDIC_DATA_DIR"] = str(TMP)
-sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "code"))
 
 import config as C  # noqa: E402
 import polars as pl  # noqa: E402

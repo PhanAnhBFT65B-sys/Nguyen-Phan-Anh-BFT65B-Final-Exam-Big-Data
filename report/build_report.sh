@@ -15,7 +15,7 @@ for r in rows:
     dq += f"| {r['id']} | {r['table']} | {r['check'].replace('|', '/')} | {n} | {r['pct']} | {r['handling_in_s04'].replace('|', '/')} |\n"
 dq += "\nMissing-value profile per field and the full failure-gap histogram: `outputs/dq_report.md` and `outputs/tables/`."
 md = md.replace("See `outputs/dq_report.md` in the repository (generated automatically); reproduced in the appendix pages that follow.",
-                "Generated automatically by `src/s03_data_quality.py` (`outputs/dq_report.md`).\n\n" + dq)
+                "Generated automatically by `code/s03_data_quality.py` (`outputs/dq_report.md`).\n\n" + dq)
 Path("_build.md").write_text(md, encoding="utf-8")
 PY
 pandoc _build.md -o report.docx --resource-path=.:.. --reference-doc=reference.docx

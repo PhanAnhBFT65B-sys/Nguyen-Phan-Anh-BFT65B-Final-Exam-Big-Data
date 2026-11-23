@@ -7,7 +7,7 @@ subtitle: "BFT65B – Big Data Analytics in Finance · Final Individual Research
 |----------------------|------------------------------------------------------------------------------|
 | **Student** | Nguyễn Phan Anh — Student ID: 11230928 |
 | **GitHub repository (public)** | https://github.com/PhanAnhBFT65B-sys/Nguyen-Phan-Anh-BFT65B-Final-Exam-Big-Data |
-| **Download method** | FDIC BankFind public API (`api.fdic.gov/banks`), script `src/s01_download.py` (adapted from the course starter); resumable, verified against the API's own row totals |
+| **Download method** | FDIC BankFind public API (`api.fdic.gov/banks`), script `code/s01_download.py` (adapted from the course starter); resumable, verified against the API's own row totals |
 | **Download date** | 23 November 2026 (API index `risview_20261116221646`) |
 | **Row counts** | Financials 1,682,738 bank-quarters (170 quarters, 1984Q1–2026Q2, 24,064 banks); Failures 4,117; Institutions 27,838; clean panel 1,681,643 |
 | **Development period** | 1984Q1–2006Q4: 1,193,914 bank-quarters, **2,658 failing banks** (10,251 positive bank-quarters) |
@@ -576,7 +576,7 @@ Saito, T., & Rehmsmeier, M. (2015). The precision-recall plot is more informativ
 
 Zaharia, M., et al. (2016). Apache Spark: A unified engine for big data processing. *Communications of the ACM*, 59(11), 56–65.
 
-Course material: BFT65B starter script `fdic_download_starter.py` (National Economics University). `src/s01_download.py` is adapted from it.
+Course material: BFT65B starter script `fdic_download_starter.py` (National Economics University). `code/s01_download.py` is adapted from it.
 
 **AI-assistance statement.** Claude (Anthropic)
 

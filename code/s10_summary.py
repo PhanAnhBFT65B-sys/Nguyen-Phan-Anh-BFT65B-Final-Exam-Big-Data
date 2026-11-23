@@ -63,7 +63,7 @@ def main() -> None:
     stats = json.loads((C.TAB_DIR / "p2_panel_stats.json").read_text())
     small = json.loads((C.RAW_DIR / "manifest_small_tables.json").read_text())
     man = json.loads((C.RAW_DIR / "manifest_financials.json").read_text())
-    cover = {"download_method": "FDIC BankFind public API (api.fdic.gov/banks), src/s01_download.py",
+    cover = {"download_method": "FDIC BankFind public API (api.fdic.gov/banks), code/s01_download.py",
              "download_date_utc": max(m["downloaded_utc"] for m in man.values())[:10],
              "api_index": sorted({m["api_index"] for m in man.values()})[-1],
              "financials_rows": comp["rows"], "quarters": comp["quarters"], "banks": comp["distinct_cert"],

@@ -26,7 +26,7 @@ python -m venv .venv
 pip install -r requirements.txt
 
 pytest -q                                              # 4 unit tests (labels, YTD, point-in-time) - no data needed
-python src/s01_download.py --start 2023-03-31 --end 2023-12-31   # smoke test: 4 quarters, < 1 minute
+python code/s01_download.py --start 2023-03-31 --end 2023-12-31   # smoke test: 4 quarters, < 1 minute
 python run_all.py                                      # full pipeline, end to end
 python run_all.py --skip-spark                         # same, without the two PySpark steps
 ```
@@ -37,27 +37,27 @@ Set `FDIC_DATA_DIR=/some/path` to keep the data outside the repository folder.
 
 | Step | Script | Exam part | Runtime on a 4-core / 16 GB machine |
 |---|---|---|---|
-| Download via API + completeness check | `src/s01_download.py` | 1 | 14 min (API-bound) |
-| Storage-layout benchmark (CSV vs Parquet layouts) | `src/s02_storage_benchmark.py` | 1 | 6 min |
-| Automated data-quality audit → `outputs/dq_report.md` | `src/s03_data_quality.py` | 2 | 10 s |
-| Clean point-in-time panel + labels + exit types | `src/s04_build_panel.py` | 2, 3 | 5 s |
-| Polars vs pandas benchmark + scaling test | `src/s05_benchmark.py` | 3 | 4 min |
-| PySpark reproduction + equality check + plans | `src/s06_spark_demo.py` | 3 | 2 min |
-| Leak-free features + truncation leakage test | `src/s07_features.py` | 4 | 15 s |
-| Validation, threshold from costs, single test | `src/s08_model.py` | 5 | 4 min |
-| Spark MLlib demo (development fold only) | `src/s09_spark_mllib.py` | 5 | 1 min |
-| Bootstrap CI, publication-lag check, cover numbers | `src/s10_summary.py` | 5, 6 | 20 s |
-| Extra report figures (download profile, event study, importance, test by year) | `src/s11_report_figures.py` | 4, 5 | 15 s |
+| Download via API + completeness check | `code/s01_download.py` | 1 | 14 min (API-bound) |
+| Storage-layout benchmark (CSV vs Parquet layouts) | `code/s02_storage_benchmark.py` | 1 | 6 min |
+| Automated data-quality audit → `outputs/dq_report.md` | `code/s03_data_quality.py` | 2 | 10 s |
+| Clean point-in-time panel + labels + exit types | `code/s04_build_panel.py` | 2, 3 | 5 s |
+| Polars vs pandas benchmark + scaling test | `code/s05_benchmark.py` | 3 | 4 min |
+| PySpark reproduction + equality check + plans | `code/s06_spark_demo.py` | 3 | 2 min |
+| Leak-free features + truncation leakage test | `code/s07_features.py` | 4 | 15 s |
+| Validation, threshold from costs, single test | `code/s08_model.py` | 5 | 4 min |
+| Spark MLlib demo (development fold only) | `code/s09_spark_mllib.py` | 5 | 1 min |
+| Bootstrap CI, publication-lag check, cover numbers | `code/s10_summary.py` | 5, 6 | 20 s |
+| Extra report figures (download profile, event study, importance, test by year) | `code/s11_report_figures.py` | 4, 5 | 15 s |
 
 Seeds are fixed (`config.SEED = 42`, `PYTHONHASHSEED=0` in benchmark subprocesses).
 
 ## 2. Repository layout
 
 ```
-src/config.py          paths, field list (38 Call Report fields + keys), periods, seed
-src/utils.py           timing and fresh-process memory measurement helpers
-src/bench_impl.py      the same transformations written in pandas and in Polars (for s05)
-src/s01 ... s11        pipeline steps (table above)
+code/config.py          paths, field list (38 Call Report fields + keys), periods, seed
+code/utils.py           timing and fresh-process memory measurement helpers
+code/bench_impl.py      the same transformations written in pandas and in Polars (for s05)
+code/s01 ... s11        pipeline steps (table above)
 tests/test_pipeline.py unit tests on a hand-made mini panel
 outputs/dq_report.md   generated data-quality report
 outputs/tables/        every number quoted in the report (CSV/JSON/plans)
@@ -98,9 +98,9 @@ data/                  (git-ignored) raw/, bench/, clean/, features/
 
 ## 4. Running the Spark steps on Google Colab (if Java is not installed locally)
 
-1. Upload `src/` and the two input files `data/bench/panel_zstd.parquet` and `data/raw/failures.parquet`
+1. Upload `code/` and the two input files `data/bench/panel_zstd.parquet` and `data/raw/failures.parquet`
    (for s09 also `data/features/features.parquet`) to Colab, keeping the same folder structure.
-2. `!pip install -r requirements.txt` then `!python src/s06_spark_demo.py` and `!python src/s09_spark_mllib.py`.
+2. `!pip install -r requirements.txt` then `!python code/s06_spark_demo.py` and `!python code/s09_spark_mllib.py`.
 
 ## 5. Sources and citations
 
@@ -108,7 +108,7 @@ Data and code
 * FDIC BankFind Suite API, <https://api.fdic.gov/banks> and field dictionaries
   <https://api.fdic.gov/banks/docs/> (accessed 23 Nov 2026; API index `risview_20261116221646`).
 * Course starter script `fdic_download_starter.py` (BFT65B, National Economics University).
-  `src/s01_download.py` is **adapted from it** (paging, retry/back-off, manifest and completeness check);
+  `code/s01_download.py` is **adapted from it** (paging, retry/back-off, manifest and completeness check);
   changes are listed in the module docstring.
 * Libraries: Polars (Vink et al.), pandas, PyArrow, scikit-learn (Pedregosa et al., 2011), Apache Spark /
   PySpark (Zaharia et al., 2016), matplotlib. Exact versions in `requirements.txt`.
