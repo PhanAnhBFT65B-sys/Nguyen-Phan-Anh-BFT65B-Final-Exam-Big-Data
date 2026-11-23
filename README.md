@@ -1,7 +1,7 @@
 # A Big-Data Pipeline for Bank-Failure Early Warning (FDIC, 1984Q1–2026Q2)
 
 BFT65B – Big Data Analytics in Finance – Final individual report.
-Author: **Nguyễn Phan Anh** (student ID: `<fill in>`).
+Author: **Nguyễn Phan Anh** (student ID: `11230928`).
 
 This repository rebuilds, from public FDIC data, a reproducible pipeline that
 1. downloads 42 years of quarterly Call Reports (1,682,738 bank-quarters), the failure list and the institution table,
