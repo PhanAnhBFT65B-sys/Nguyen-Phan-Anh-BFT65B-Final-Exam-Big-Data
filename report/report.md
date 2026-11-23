@@ -112,7 +112,7 @@ Storing data well means choosing four things: **format**, **schema**, **partitio
 
 ## 3.2 Measurements
 
-`s02_storage_benchmark.py` writes the same 1.68 M × 41 table in six layouts. It then times three typical queries with Polars, and two with pandas, as the median of three warm runs [`p1_storage_benchmark.csv`, Figure 2]:
+`s02_storage_benchmark.py` writes the same 1.68 M × 41 table in six layouts. It then times three typical queries with Polars, and two with pandas, as the median of three warm runs [`p1_storage_benchmark.csv`, Figure F1 in Appendix F]:
 
 * **Q1 full scan**: all columns, as when the panel is rebuilt.
 * **Q2 projection**: 4 columns (`CERT`, `REPDTE`, `ASSET`, `EQ`), as in a quick capital chart.
@@ -127,7 +127,6 @@ Storing data well means choosing four things: **format**, **schema**, **partitio
 | Parquet zstd, partitioned by year | 192.0 | 43 | 0.9 | 0.294 | 0.037 | 0.007 | – |
 | Parquet zstd, one file per quarter | 239.3 | 170 | – | 0.278 | 0.044 | 0.006 | – |
 
-![Figure 2. Storage size and Polars read time by layout (log scale).](../outputs/figures/p1_storage.png){width=100%}
 
 ## 3.3 Why Parquet beats CSV, from the numbers
 
@@ -144,7 +143,7 @@ Snappy decodes slightly faster than zstd, but the file is 39% larger. Since the 
 
 ## 4.1 The automated audit
 
-`s03_data_quality.py` runs 30 named checks, plus a missing-value profile for every field and every year. It writes a human-readable report [`outputs/dq_report.md`], a machine-readable check table [`p2_dq_checks.csv`] and a missingness heat-map (Figure 3). The checks are organised in five families:
+`s03_data_quality.py` runs 30 named checks, plus a missing-value profile for every field and every year. It writes a human-readable report [`outputs/dq_report.md`], a machine-readable check table [`p2_dq_checks.csv`] and a missingness heat-map (Figure 2). The checks are organised in five families:
 
 * **Keys and completeness**: duplicate or null keys, quarters with gaps.
 * **Validity ranges**: values that cannot be negative, equity larger than assets, extreme ratios.
@@ -154,7 +153,7 @@ Snappy decodes slightly faster than zstd, but the file is 39% larger. Since the 
 
 Each check has an id, and every fix in `s04_build_panel.py` cites the same id. The audit therefore *describes* the problems, the panel script *fixes* them, and the trail between the two is explicit. Because the audit runs on every execution, a new quarter with a new problem would show up immediately.
 
-![Figure 3. Share of missing values by field and year (raw layer).](../outputs/figures/p2_missing_heatmap.png){width=95%}
+![Figure 2. Share of missing values by field and year (raw layer).](../outputs/figures/p2_missing_heatmap.png){width=95%}
 
 ## 4.2 Findings and how each one is handled
 
@@ -270,7 +269,6 @@ Three tasks are measured: **T1** the panel build of Section 5.1; **T2** dynamic 
 | T2 dynamic features (s) | 1.29 | **0.35** | – | – | – |
 | T3 per-quarter aggregates (s) | 0.22 | **0.08** | – | – | – |
 
-![Figure 4. Panel build time and peak memory by engine and configuration.](../outputs/figures/p3_benchmark_bars.png){width=100%}
 
 **Interpretation.** Polars is 2.5–2.9× faster than pandas on the panel build, 3.7× on the dynamic features and 2.7× on the aggregates, and it uses 25–33% less memory. The configuration runs decompose the gain:
 
@@ -306,7 +304,7 @@ Three tasks are measured: **T1** the panel build of Section 5.1; **T2** dynamic 
 
 ## 5.5 When is a cluster justified?
 
-To find the limit of one machine, I replicated the panel 2×, 4× and 8× (up to 13.5 M rows, each copy with shifted certificate numbers) and measured time and peak memory in fresh processes [`p3_scaling.csv`, Figure 5]:
+To find the limit of one machine, I replicated the panel 2×, 4× and 8× (up to 13.5 M rows, each copy with shifted certificate numbers) and measured time and peak memory in fresh processes [`p3_scaling.csv`, Figure 3]:
 
 | Input rows | pandas time / memory | Polars lazy time / memory | Polars streaming time / memory |
 |-------------------|--------------------------:|--------------------------:|--------------------------:|
@@ -315,7 +313,7 @@ To find the limit of one machine, I replicated the panel 2×, 4× and 8× (up to
 | 6.7 M (×4) | 16.1 s / 10.4 GB | 5.1 s / 5.5 GB | 4.9 s / 4.5 GB |
 | 13.5 M (×8) | skipped (would exceed RAM) | 12.0 s / 10.5 GB | 9.4 s / 7.3 GB |
 
-![Figure 5. Scaling of the panel build: time and peak memory vs input rows.](../outputs/figures/p3_scaling.png){width=90%}
+![Figure 3. Scaling of the panel build: time and peak memory vs input rows.](../outputs/figures/p3_scaling.png){width=90%}
 
 Time and memory grow **linearly**: about 1.55 GB per million rows for pandas, against 0.55 GB per million rows for streaming Polars. On a 16 GB laptop with about 12 GB usable, the single-machine limit for this workload is about 7–8 M rows for pandas, about 15 M rows for in-memory Polars and about 22 M rows for streaming Polars. Beyond that, Polars streaming can still process larger-than-RAM data by writing results directly to disk (`sink_parquet`).
 
@@ -344,7 +342,7 @@ I built 36 features [`s07_features.py`; full dictionary in Appendix B], grouped 
 
 Two pieces of evidence, both computed on the **development period only** so the test period stays untouched, show that these features separate failing from surviving banks.
 
-**Event study** [`p4_event_study.csv`, Figure 6]: medians of key ratios *k* quarters before failure, against banks that do not fail within 12 quarters.
+**Event study** [`p4_event_study.csv`, Figure 4]: medians of key ratios *k* quarters before failure, against banks that do not fail within 12 quarters.
 
 | Quarters before failure | 12 | 8 | 4 | 1 | No failure |
 |-----------------------------------|-----------:|-----------:|-----------:|-----------:|----------------:|
@@ -354,11 +352,11 @@ Two pieces of evidence, both computed on the **development period only** so the 
 | Texas ratio | 0.48 | 0.86 | 1.70 | 3.44 | 0.08 |
 | CRE loans / equity | 2.90 | 3.06 | 4.12 | 4.76 | 0.96 |
 
-![Figure 6. Event study (development period): median ratios before failure vs non-failing banks.](../outputs/figures/p4_event_study.png){width=100%}
+![Figure 4. Event study (development period): median ratios before failure vs non-failing banks.](../outputs/figures/p4_event_study.png){width=100%}
 
 Deterioration is visible **three years ahead**: twelve quarters before failure, the median failing bank already has a Texas ratio six times, and a non-current loan ratio three times, that of a healthy bank. The ratios then worsen steadily. Capital is the *last* to break, which is why a model on capital alone warns late. Liquidity (cash + securities) is lower for failing banks at every horizon (19–20% vs 32%) but does not trend. This supports including it as a level feature, not as a trigger.
 
-**Permutation importance** on the last development fold (Figure 8 in Section 7) ranks the Texas ratio, the worst quarterly ROA of the last year, the real-estate loan share and the net interest margin highest. These are the asset-quality, earnings and concentration channels of the event study.
+**Permutation importance** on the last development fold (Figure 6 in Section 7) ranks the Texas ratio, the worst quarterly ROA of the last year, the real-estate loan share and the net interest margin highest. These are the asset-quality, earnings and concentration channels of the event study.
 
 ## 6.3 Leak-free by construction
 
@@ -387,9 +385,9 @@ The feature table holds 1,681,643 rows. The label and the failure date are carri
 
 ## 7.1 Split
 
-The modelling sample uses quarters up to 2025Q2. **Development: 1984Q1–2006Q4. Gap: 2007Q1–Q4 (discarded). Test: 2008Q1–2025Q2** (Figure 7).
+The modelling sample uses quarters up to 2025Q2. **Development: 1984Q1–2006Q4. Gap: 2007Q1–Q4 (discarded). Test: 2008Q1–2025Q2** (Figure 5).
 
-![Figure 7. Failures per year and the development / gap / test periods.](../outputs/figures/p5_split.png){width=95%}
+![Figure 5. Failures per year and the development / gap / test periods.](../outputs/figures/p5_split.png){width=95%}
 
 The gap guarantees that no development label window, which reaches up to 2007Q4, overlaps the test period; the code asserts this. I chose this split *before* looking at any test result, for three reasons. (i) It mimics real deployment: a system built with data up to 2006 would have faced the global financial crisis. (ii) The test set is large: 558 failing banks, ten times the required 50, so its metrics are precise. (iii) The test period covers a crisis (2008–12), a quiet decade and the 2023 regional-bank episode. The cost is a regime shift: development failures are mostly 1980s credit and thrift failures. That makes the test harder, and therefore more honest.
 
@@ -427,7 +425,7 @@ Positives are 0.75% of rows, so accuracy is meaningless: predicting "no failure"
 
 Gradient boosting wins on the primary metric: a boosting configuration is best in three of the four folds, and logistic regression only in 1988, the first crisis year, with the least training data. Boosting is also far better calibrated (Brier 0.010 vs 0.035), because the logistic models use balanced class weights that push probabilities upward. Skill falls in 2001 for every model: with only 37 positive rows, failures in a calm year are idiosyncratic. The selected model is **M2 (lr 0.05, 31 leaves)**, the best on mean PR-AUC and on the worst fold.
 
-![Figure 8. Permutation importance of the selected model (development fold 2001): drop in PR-AUC when a feature is shuffled.](../outputs/figures/p5_importance.png){width=75%}
+![Figure 6. Permutation importance of the selected model (development fold 2001): drop in PR-AUC when a feature is shuffled.](../outputs/figures/p5_importance.png){width=75%}
 
 ## 7.4 Alarm threshold from costs
 
@@ -436,7 +434,7 @@ A probability is not yet a decision. The supervisor needs a threshold above whic
 * **A missed failure** (false negative) costs the deposit insurance fund the resolution loss. **Estimated from the data**: the median `COST` of development-period failures is **USD 8.87 m**, and the median loss rate is 20.2% of assets.
 * **A false alarm** (false positive) triggers a targeted examination of a healthy bank. Its cost is not in the FDIC data, so I state it as an **assumption, USD 250 k**, and show below how the threshold moves when it changes.
 
-The threshold minimises the expected cost C_FN·FN + C_FP·FP on the pooled **out-of-fold development predictions** (Elkan, 2001). It is searched on a grid of 400 quantiles of the predicted probabilities. Choosing it empirically, rather than with the textbook formula C_FP / (C_FP + C_FN), protects against residual miscalibration. The result is a threshold of **0.0072**, which flags 7.0% of development bank-quarters (Figure 9, right).
+The threshold minimises the expected cost C_FN·FN + C_FP·FP on the pooled **out-of-fold development predictions** (Elkan, 2001). It is searched on a grid of 400 quantiles of the predicted probabilities. Choosing it empirically, rather than with the textbook formula C_FP / (C_FP + C_FN), protects against residual miscalibration. The result is a threshold of **0.0072**, which flags 7.0% of development bank-quarters (Figure 7, right).
 
 | Assumed C_FP (USD k) | C_FN / C_FP | Threshold | Flag rate (dev) | Recall (dev) | Precision (dev) |
 |---:|---:|---:|---:|---:|---:|
@@ -458,7 +456,7 @@ The model, features, threshold and costs were written to `p5_frozen_choices.json
 | B0 baseline (3 ratios) | 0.527 | 0.974 | 0.0230 | 0.849 | 0.213 |
 | **M2 gradient boosting** | **0.573** | **0.980** | **0.0034** | **0.861** | **0.216** |
 
-![Figure 9. Test precision-recall curves (left) and the development cost curve used to choose the threshold (right).](../outputs/figures/p5_pr_cost.png){width=100%}
+![Figure 7. Test precision-recall curves (left) and the development cost curve used to choose the threshold (right).](../outputs/figures/p5_pr_cost.png){width=100%}
 
 **At the frozen threshold** the confusion matrix on the test period is:
 
@@ -482,9 +480,9 @@ Three quarters of failing banks are already flagged a full year ahead, enough ti
 
 **Publication lag.** A Call Report becomes public about 30–60 days after quarter-end. 410 test positives (19%) are failures within 60 days of the report date, on which a supervisor might not have been able to act in time. Removing them gives PR-AUC 0.464 and ROC-AUC 0.978 [`p5_publication_lag_check.json`]. The model's skill is therefore not driven by these "almost-failed" rows.
 
-**Stability over time** [`p5_test_by_year.csv`, Figure 10]. PR-AUC is 0.65–0.75 in 2009–2012, at the height of the crisis wave, and stays informative in most later years. It is close to 0, however, for the 2022–2024 rows that preceded the 2023 failures (Silicon Valley Bank, Signature, First Republic). Those banks were well capitalised and profitable on paper, with few bad loans. They failed through **runs on uninsured deposits and unrealised losses on securities**, which none of the selected Call Report ratios measures. This is the most important finding for the design of a real system: an early-warning model only sees the risks its data describe.
+**Stability over time** [`p5_test_by_year.csv`, Figure 8]. PR-AUC is 0.65–0.75 in 2009–2012, at the height of the crisis wave, and stays informative in most later years. It is close to 0, however, for the 2022–2024 rows that preceded the 2023 failures (Silicon Valley Bank, Signature, First Republic). Those banks were well capitalised and profitable on paper, with few bad loans. They failed through **runs on uninsured deposits and unrealised losses on securities**, which none of the selected Call Report ratios measures. This is the most important finding for the design of a real system: an early-warning model only sees the risks its data describe.
 
-![Figure 10. Test PR-AUC by year (line) and positive rows per year (bars).](../outputs/figures/p5_test_by_year.png){width=95%}
+![Figure 8. Test PR-AUC by year (line) and positive rows per year (bars).](../outputs/figures/p5_test_by_year.png){width=95%}
 
 ## 7.6 Spark MLlib demo
 
@@ -500,26 +498,62 @@ The ROC-AUCs agree closely. The PR gap has two causes. The Spark pipeline has no
 
 # 8. Conclusions (Part 6)
 
-## 8.1 Q1 — storage and processing
+The three questions of Section 1.1 are answered below. Each answer gives the short answer first, then the evidence from the measurements, then the reasoning a supervisor would need to apply it to another dataset.
 
-On a laptop, the data should be stored as typed, zstd-compressed Parquet: a landing zone with one file per quarter (resumable, append-only) and a year-partitioned clean layer. This layout is 2.8× smaller than CSV, up to 84× faster to query, and free of type drift. It should be processed with lazy Polars: 1.3 s for the whole panel, 2.5–3.7× faster than pandas and with less memory, mainly thanks to parallel execution and the query optimiser. Peak memory grows linearly at about 0.55 GB per million rows in streaming mode, so the full FDIC panel sits about 10× below a 16 GB laptop's limit. A Spark cluster is justified only for data one to two orders of magnitude larger (loan-level or transaction data), or for shared, always-on production use. At FDIC scale, Spark gave identical results but was about 40× slower, because of its fixed overheads.
+## 8.1 Q1 — How should four decades of bank reports be stored and processed on a laptop, and when would a Spark cluster be needed?
 
-## 8.2 Q2 — data quality without look-ahead bias
+**Short answer.** Store the data as typed, zstd-compressed Parquet in two layers, process them with lazy Polars on one machine, and keep Spark for data at least ten times larger than the FDIC panel.
 
-The raw data contain silent traps:
+**Storage.** Four decades of quarterly Call Reports are 1.68 M rows × 41 columns. That is "big" for a spreadsheet, which stops at about one million rows, but small for a modern laptop. The decisive question is therefore not *where* to store the data but *how*. The measurements of Section 3 support three choices:
 
-* year-to-date income items;
-* missing values encoded as zero;
-* structural missingness, with fields not collected before 1990 or 2001;
-* banks that kept filing after they failed;
-* change codes that contradict the failure list;
-* revised rather than vintage values.
+1. *Parquet rather than CSV.* The same table is 190 MB in zstd Parquet against 527 MB in CSV (2.8× smaller). A full read is about 4× faster, a 4-column read is 21× faster, and a 4-column read of one year is 84× faster, because Parquet lets the reader skip columns (projection) and row groups (min/max statistics). Just as important, Parquet keeps the schema. The CSV round trip silently turned `REPDTE` into an integer and `P3ASSET` into a string; a model trained on that file would have been wrong without any error message.
+2. *Two layers with different partitioning.* The raw landing zone keeps one file per quarter. This makes the download resumable and append-only, and each file can be checked against the API's own row count (170/170 quarters verified). The clean layer is consolidated into one file per year. This avoids the small-files problem (the per-quarter layout is 26% larger because every file repeats its own footer) while still letting a year filter prune whole folders.
+3. *zstd rather than snappy.* zstd gives a file 39% smaller for a decode time that stays under 0.3 s for the whole panel, so the smaller file wins.
 
-Every one of them is detected by a named, automated check, fixed in the clean layer with a rule that uses only current or past information, and protected by unit tests and a truncation test.
+**Processing.** The whole clean panel is built by one lazy Polars query in about 1.3 s. Polars is 2.5–3.7× faster than idiomatic pandas on the three tasks and uses 25–33% less memory, with outputs that are identical to the last row. The configuration runs explain *why*: most of the speed comes from running the plan on all cores (on one core Polars is no faster than pandas), the query optimiser is worth another 1.6× (predicate and projection pushdown, shared sub-plans computed once), and the Arrow memory layout keeps peak memory low. The practical lesson is that the engine matters less than writing the query so the engine can optimise it: reading the plan and replacing nine window group-bys with sorted shifts cut the run time by a further 26%.
 
-## 8.3 Q3 — honest validation
+**When a cluster is needed.** The scaling test answers this with a number instead of an opinion. Time and memory grow linearly with rows; streaming Polars needs about 0.55 GB per million rows, so a 16 GB laptop can process about 20 M rows of this workload. The full FDIC panel is about 10× below that limit and grows by only about 17,000 rows a year, so it will not reach it in any realistic horizon. On this data, PySpark produced exactly the same panel and labels but was about 40× slower, because its fixed costs (JVM start-up, planning, scheduling, serialisation, shuffle files) dominate when the data fit on one machine. A cluster becomes the right tool only when at least one of three conditions holds: (i) the data are one to two orders of magnitude larger, as with loan-level registry data or daily payments; (ii) the data must be shared by many users with uptime guarantees and access control; or (iii) the work is a very large number of independent, slow jobs, such as stress-test simulations. For a national bank-level supervisory panel, none of these holds today.
 
-Yes, within limits. The validation is time-ordered and purged, all fitted preprocessing sits inside the training folds, a 4-quarter gap separates development from test, and the test is used once after the choices are frozen. Under these conditions the model reaches PR-AUC 0.573 (CI 0.534–0.608) and flags 94% of failing banks at least once before failure, at a 2% alarm rate, with three quarters of them flagged a year ahead. Its blind spot, the 2023 liquidity failures, is as informative as its score.
+## 8.2 Q2 — What quality problems do the raw data contain, and how does the pipeline handle them without look-ahead bias?
+
+**Short answer.** The raw data are clean in format but contain six *silent* traps, each of which would bias a model without causing an error. The pipeline detects each one with a named automated check and fixes it with a rule that only uses information available at the report date.
+
+**The problems.** The audit of Section 4 runs 30 checks on every execution. The six that matter most are:
+
+| Trap | What goes wrong if it is ignored | How the pipeline handles it |
+|---|---|---|
+| Year-to-date income items | A bank looks four times as profitable in December as in March; a December loss is hidden by earlier profits | De-cumulated to quarterly flows, using the previous quarter only if it is the immediately preceding quarter of the same year |
+| "Not applicable" encoded as 0 (risk-based capital before 1990, CBLR filers since 2020) | The model reads 0% capital as the strongest failure signal | 0 → missing, with a missing-indicator inside the model pipeline |
+| Fields not collected before 1990/2001 | Imputation from the full table would carry later years' distributions into the past | Kept missing; imputed and winsorised inside each training fold only |
+| 230 thrifts that kept filing after they failed | Rows after the failure would be "predicted" with hindsight | Rows on or after the first closure date are removed |
+| Change codes that call failed banks "mergers" | 74% of failed banks would be labelled as harmless exits | Failure vs other exit is decided only from the Failures table |
+| Revised rather than first-published figures | Real-time performance may be slightly overstated | Documented as a limitation; a production system should keep vintages |
+
+**Why the fixes do not create look-ahead bias.** Look-ahead bias appears whenever a value at quarter *q* is computed with information from after *q*. The pipeline closes every channel through which this could happen:
+
+* *Row-level rules use the past only.* De-cumulation uses the previous quarter; lags use the previous reported quarter and give a missing value if a quarter is skipped; a missing value is never filled with the bank's next report.
+* *Fitted steps never see the future.* Winsorising limits, imputation medians and scaling constants are learned inside a scikit-learn `Pipeline` that is refitted on each training fold, so validation and test rows are transformed with parameters estimated from earlier data only.
+* *The future enters only through the label*, and the label window is half-open: a failure on the report date itself belongs to the past.
+* *Anomalies with economic meaning are kept.* Negative equity (15,647 rows) is not an error; it is exactly what a failing bank looks like. Deleting it would have removed the signal the model needs.
+
+**Evidence rather than intention.** A design that *should* be leak-free is not proof, so the pipeline tests it. The truncation test recomputes all 36 features from data cut at 1990Q4, 2008Q4 and 2023Q1 and finds identical values for every bank and feature. The unit tests pin the de-cumulation, the gap rule and the exact label window, so a later code change cannot break them silently. Exited banks are never dropped, which avoids survivorship bias, and mergers keep label 0, which avoids treating 16,476 healthy exits as failures.
+
+## 8.3 Q3 — Can the pipeline's output support an honestly validated early-warning model?
+
+**Short answer.** Yes, within clear limits. The pipeline's output supports a model that is validated honestly, performs well on a long out-of-sample period that includes a crisis, and states openly where it fails.
+
+**What makes the validation honest.** Four safeguards are built in, and each one closes a specific route to over-optimistic results:
+
+1. *Time order.* Development (1984–2006) comes strictly before test (2008Q1–2025Q2), so the model is evaluated as it would have been used: trained on the past, applied to the future.
+2. *Purge and gap.* A 4-quarter purge inside the rolling-origin validation, and a 4-quarter gap (2007) before the test period, ensure that no training label window overlaps the evaluation period. Random K-fold was rejected because it would put quarters of the same crisis and the same bank on both sides of the split.
+3. *Training-only preprocessing.* Every fitted transformation lives inside the training folds (Section 6.3).
+4. *A single, frozen test.* The model, features, cost assumptions and threshold were written to a hashed file before the test ran, and the test was evaluated once.
+
+**What the model achieves.** On 435,446 test bank-quarters with 558 failing banks, the selected gradient-boosting model reaches PR-AUC 0.573 (bank-bootstrap 95% CI 0.534–0.608), against 0.005 for a no-skill model and 0.527 for the three-ratio baseline. At the threshold chosen from development costs only, it flags 2.0% of bank-quarters, catches 86% of positive rows and **94% of failing banks at least once before failure**, and three quarters of failing banks a full year ahead. Removing the failures that happen within 60 days of the report, on which a supervisor could not act, lowers PR-AUC to 0.464 but leaves the conclusion intact.
+
+**How to read these numbers.** Three points keep the result honest rather than flattering. First, the gain over the baseline is real but moderate: three well-chosen ratios (capital, asset quality, earnings) already carry most of the signal, which is consistent with the event study and with Cole & White (2012). The value of the pipeline lies as much in making that baseline *trustworthy* as in the extra accuracy. Second, the precision of about 0.21 means roughly four false alarms for each true one; under the stated costs this is the optimal trade-off, but a supervisor with a higher examination cost would choose a higher threshold (Section 7.4). Third, the model is blind to the 2023 failures. Silicon Valley Bank, Signature and First Republic looked healthy on every selected ratio and failed through runs on uninsured deposits and unrealised securities losses. This is not a defect of the validation but one of its most useful outputs: it shows precisely which data a real early-warning system must add.
+
+**Overall answer.** The pipeline turns 42 years of raw reports into a point-in-time-correct, leak-tested panel, and on that panel a simple, frozen model detects most bank failures early enough to act. Its honest limits (revised data, an assumed false-alarm cost, and risk channels missing from the field set) are documented and measurable, which is exactly what a supervisor needs before relying on such a system.
 
 ## 8.4 Limitations
 
@@ -539,20 +573,7 @@ Vietnam has about 50 banks and few formal failures. Recent problem banks were pl
 * **The big-data problem moves to granular data**: the National Credit Information Centre's loan-level records, interbank and payment flows, and deposit concentration by depositor. There, tens to hundreds of millions of rows would justify the Spark-scale processing that the FDIC panel does not.
 * **The pipeline design carries over unchanged**: a typed landing zone with a completeness manifest, automated and versioned quality checks, point-in-time features with a truncation test, time-ordered validation, and a cost-based threshold set with the supervisor's own estimate of examination costs.
 
-## 8.6 Recommended roadmap for a supervisory pipeline
-
-The experiment suggests a concrete, staged roadmap for the supervision department:
-
-| Stage | What to build | Evidence from this report |
-|------------|------------------------------------------------------------|--------------------------------------------|
-| 1. Landing zone | Automated quarterly download into typed Parquet, with a completeness manifest checked against the source's own totals | Section 2.3: 170/170 quarters verified, resumable |
-| 2. Quality gate | The audit of Section 4 run on every new quarter; the pipeline stops if a high-severity check changes | Section 4: 30 checks, six silent traps found |
-| 3. Point-in-time store | Clean panel and features rebuilt from raw data, with vintages kept from now on (store what was known when) | Section 4.5, limitation 1 |
-| 4. Model governance | Time-ordered validation, frozen choices with a hash, one test per model version, yearly re-estimation | Section 7: frozen file, bootstrap CI |
-| 5. Coverage extension | Add uninsured deposits, securities at market value, interest-rate gaps and market data | Section 7.5: the 2023 blind spot |
-| 6. Scale-out (only if needed) | Spark or a lakehouse when loan-level or payment data are added | Section 5.5: linear scaling, laptop limit ~20 M rows |
-
-The first four stages need no cluster and could run on one workstation, because the measurements show that the whole national panel fits comfortably in memory. Scale-out is the *last* step, not the first. It is justified by data volume, not by fashion.
+A staged roadmap for building such a system, with the evidence from this report behind each stage, is given in Appendix E.
 
 ```{=openxml}
 <w:p><w:r><w:br w:type="page"/></w:r></w:p>
@@ -637,3 +658,24 @@ LEFT JOIN ON [CERT, REPDTE]
 ```
 
 The full plans (Polars naive vs optimised, Spark physical plans) are in `outputs/tables/p3_*_plan_*.txt`.
+
+# Appendix E — Recommended roadmap for a supervisory pipeline
+
+The experiment suggests a concrete, staged roadmap for the supervision department:
+
+| Stage | What to build | Evidence from this report |
+|------------|------------------------------------------------------------|--------------------------------------------|
+| 1. Landing zone | Automated quarterly download into typed Parquet, with a completeness manifest checked against the source's own totals | Section 2.3: 170/170 quarters verified, resumable |
+| 2. Quality gate | The audit of Section 4 run on every new quarter; the pipeline stops if a high-severity check changes | Section 4: 30 checks, six silent traps found |
+| 3. Point-in-time store | Clean panel and features rebuilt from raw data, with vintages kept from now on (store what was known when) | Section 4.5, limitation 1 |
+| 4. Model governance | Time-ordered validation, frozen choices with a hash, one test per model version, yearly re-estimation | Section 7: frozen file, bootstrap CI |
+| 5. Coverage extension | Add uninsured deposits, securities at market value, interest-rate gaps and market data | Section 7.5: the 2023 blind spot |
+| 6. Scale-out (only if needed) | Spark or a lakehouse when loan-level or payment data are added | Section 5.5: linear scaling, laptop limit ~20 M rows |
+
+The first four stages need no cluster and could run on one workstation, because the measurements show that the whole national panel fits comfortably in memory. Scale-out is the *last* step, not the first. It is justified by data volume, not by fashion.
+
+# Appendix F — Additional figures
+
+![Figure F1. Storage size and Polars read time by layout (log scale).](../outputs/figures/p1_storage.png){width=100%}
+
+![Figure F2. Panel build time and peak memory by engine and configuration.](../outputs/figures/p3_benchmark_bars.png){width=100%}
