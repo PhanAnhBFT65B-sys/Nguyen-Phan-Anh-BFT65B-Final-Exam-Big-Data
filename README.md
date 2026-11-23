@@ -121,8 +121,3 @@ Literature (full references in the report)
 * Elkan, C. (2001). The foundations of cost-sensitive learning. *IJCAI*.
 * López de Prado, M. (2018). *Advances in Financial Machine Learning*, ch. 7 (purged cross-validation). Wiley.
 
-AI assistance
-* Claude (Anthropic), used through Claude Code in November 2026, helped design the pipeline structure, draft
-  and debug the Python code, and draft parts of the report text. All code was run, checked and is understood
-  by the author; every number in the report comes from the scripts in this repository. Commits produced with
-  this assistance carry a `Co-Authored-By: Claude` trailer.
