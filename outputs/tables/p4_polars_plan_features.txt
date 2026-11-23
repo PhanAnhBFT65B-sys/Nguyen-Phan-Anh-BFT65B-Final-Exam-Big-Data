@@ -1,0 +1,55 @@
+simple π 48/48 ["CERT", "REPDTE", "Q", "YEAR", ... 44 other columns]
+  LEFT JOIN:
+  LEFT PLAN ON: [col("Q")]
+    simple π 46/46 ["CERT", "REPDTE", "STNAME", ... 43 other columns]
+       WITH_COLUMNS:
+       [when(col("_asset_l4") > 0.0).then(col("ASSET") / col("_asset_l4")).otherwise(null.cast(Float64)).log([dyn float: 2.718281828459045]).alias("asset_growth_yoy"), when(col("_ln_l4") > 0.0).then(col("LNLSGR") / col("_ln_l4")).otherwise(null.cast(Float64)).log([dyn float: 2.718281828459045]).alias("loan_growth_yoy"), (col("eq_ta") - col("_eq_l4")).alias("d_eq_ta_yoy"), (col("npl_ln") - col("_npl_l4")).alias("d_npl_ln_yoy"), col("roa_q").mean_horizontal([col("_roa_l1"), col("_roa_l2"), col("_roa_l3")]).alias("roa_4q"), col("roa_q").min_horizontal([col("_roa_l1"), col("_roa_l2"), col("_roa_l3")]).alias("roa_4q_min")] 
+        LEFT JOIN:
+        LEFT PLAN ON: [col("CERT"), col("Q")]
+          LEFT JOIN:
+          LEFT PLAN ON: [col("CERT"), col("Q")]
+            LEFT JOIN:
+            LEFT PLAN ON: [col("CERT"), col("Q")]
+              LEFT JOIN:
+              LEFT PLAN ON: [col("CERT"), col("Q")]
+                CACHE[id: b7e0525b-8ec3-4197-b3a1-6bd750d76cb2]
+                  simple π 41/41 ["CERT", "REPDTE", "STNAME", ... 38 other columns]
+                    simple π 72/72 ["CERT", "REPDTE", "STNAME", ... 69 other columns]
+                       WITH_COLUMNS:
+                       [col("ASSET").log([dyn float: 2.718281828459045]).alias("log_asset"), when(col("__POLARS_CSER_0x100000005")).then(col("EQ") / col("ASSET")).otherwise(null.cast(Float64)).alias("eq_ta"), when(col("__POLARS_CSER_0x10000000a") > 0.0).then(col("__POLARS_CSER_0x10000000c") / col("__POLARS_CSER_0x10000000a")).otherwise(null.cast(Float64)).alias("tce_ta"), (col("RBC1AAJ") / 100.0).alias("lev_pca"), (col("RBCRWAJ") / 100.0).alias("trbc_pca"), when(col("__POLARS_CSER_0x100000014")).then(col("NCLNLS") / col("LNLSGR")).otherwise(null.cast(Float64)).clip([dyn float: 0, dyn float: 1]).alias("npl_ln"), when(col("__POLARS_CSER_0x100000005")).then(col("NAASSET") / col("ASSET")).otherwise(null.cast(Float64)).alias("nonaccr_ta"), when(col("__POLARS_CSER_0x100000005")).then(col("P3ASSET") / col("ASSET")).otherwise(null.cast(Float64)).alias("pd30_ta"), when(col("__POLARS_CSER_0x100000005")).then(col("P9ASSET") / col("ASSET")).otherwise(null.cast(Float64)).alias("pd90_ta"), when(col("__POLARS_CSER_0x100000005")).then(col("ORE") / col("ASSET")).otherwise(null.cast(Float64)).alias("ore_ta"), when(col("__POLARS_CSER_0x100000014")).then(col("LNATRES") / col("LNLSGR")).otherwise(null.cast(Float64)).alias("alll_ln"), when(col("__POLARS_CSER_0x100000022") > 0.0).then((col("NCLNLS") + col("ORE").fill_null([0.0])) / col("__POLARS_CSER_0x100000022")).otherwise(null.cast(Float64)).alias("texas"), (4.0 * when(col("__POLARS_CSER_0x100000005")).then(col("NETINC_Q") / col("ASSET")).otherwise(null.cast(Float64))).alias("roa_q"), (4.0 * when(col("__POLARS_CSER_0x100000005")).then(col("__POLARS_CSER_0x10000002b") / col("ASSET")).otherwise(null.cast(Float64))).alias("nim_q"), (4.0 * when(col("__POLARS_CSER_0x100000005")).then(col("EINTEXP_Q") / col("ASSET")).otherwise(null.cast(Float64))).alias("cof_q"), (4.0 * when(col("__POLARS_CSER_0x100000014")).then(col("ELNATR_Q") / col("LNLSGR")).otherwise(null.cast(Float64))).alias("prov_ln_q"), (4.0 * when(col("__POLARS_CSER_0x100000014")).then(col("NTLNLS_Q") / col("LNLSGR")).otherwise(null.cast(Float64))).alias("nco_ln_q"), when(col("__POLARS_CSER_0x100000033") > 0.0).then(col("NONIX_Q") / col("__POLARS_CSER_0x100000033")).otherwise(null.cast(Float64)).alias("eff_q"), when(col("__POLARS_CSER_0x100000005")).then((col("CHBAL") + col("SC")) / col("ASSET")).otherwise(null.cast(Float64)).alias("liq_ta"), when(col("__POLARS_CSER_0x10000003c")).then(col("BRO") / col("DEP")).otherwise(null.cast(Float64)).clip([dyn float: 0, dyn float: 1]).alias("bro_dep"), when(col("__POLARS_CSER_0x100000005")).then((col("FREPP").fill_null([0.0]) + col("OTHBOR").fill_null([0.0])) / col("ASSET")).otherwise(null.cast(Float64)).alias("whsl_ta"), when(col("__POLARS_CSER_0x100000005")).then(col("COREDEP") / col("ASSET")).otherwise(null.cast(Float64)).alias("core_ta"), when(col("__POLARS_CSER_0x10000003c")).then(col("LNLSNET") / col("DEP")).otherwise(null.cast(Float64)).alias("ln_dep"), when(col("__POLARS_CSER_0x100000014")).then(col("LNRE") / col("LNLSGR")).otherwise(null.cast(Float64)).clip([dyn float: 0, dyn float: 1]).alias("re_ln"), when(col("__POLARS_CSER_0x100000014")).then(col("LNRECONS") / col("LNLSGR")).otherwise(null.cast(Float64)).clip([dyn float: 0, dyn float: 1]).alias("constr_ln"), when(col("EQ") > 0.0).then(((col("LNRECONS") + col("LNRENRES")) + col("LNREMULT")) / col("EQ")).otherwise(null.cast(Float64)).alias("cre_eq"), when(col("__POLARS_CSER_0x100000014")).then(col("LNCI") / col("LNLSGR")).otherwise(null.cast(Float64)).clip([dyn float: 0, dyn float: 1]).alias("ci_ln"), when(col("__POLARS_CSER_0x100000014")).then(col("LNCON") / col("LNLSGR")).otherwise(null.cast(Float64)).clip([dyn float: 0, dyn float: 1]).alias("con_ln")] 
+                        simple π 52/52 ["CERT", "REPDTE", "STNAME", ... 49 other columns]
+                           WITH_COLUMNS:
+                           [(col("ASSET") > 0.0).alias("__POLARS_CSER_0x100000005"), (col("ASSET") - col("__POLARS_CSER_0x100000009")).alias("__POLARS_CSER_0x10000000a"), col("__POLARS_CSER_0x10000000c"), (col("LNLSGR") > 0.0).alias("__POLARS_CSER_0x100000014"), (col("__POLARS_CSER_0x10000000c") + col("LNATRES").fill_null([0.0])).alias("__POLARS_CSER_0x100000022"), col("__POLARS_CSER_0x10000002b"), (col("__POLARS_CSER_0x10000002b") + col("NONII_Q")).alias("__POLARS_CSER_0x100000033"), (col("DEP") > 0.0).alias("__POLARS_CSER_0x10000003c")] 
+                            simple π 47/47 ["CERT", "REPDTE", "STNAME", ... 44 other columns]
+                               WITH_COLUMNS:
+                               [col("__POLARS_CSER_0x100000009"), (col("EQ") - col("__POLARS_CSER_0x100000009")).alias("__POLARS_CSER_0x10000000c"), (col("INTINC_Q") - col("EINTEXP_Q")).alias("__POLARS_CSER_0x10000002b")] 
+                                 WITH_COLUMNS:
+                                 [col("INTAN").fill_null([0.0]).alias("__POLARS_CSER_0x100000009")] 
+                                  DF ["CERT", "REPDTE", "STNAME", "ASSET", ...]; PROJECT["CERT", "REPDTE", "STNAME", "ASSET", ...] 44/57 COLUMNS
+              RIGHT PLAN ON: [col("CERT"), col("Q")]
+                SELECT [col("CERT"), (col("Q") + 4), col("ASSET").alias("_asset_l4"), col("LNLSGR").alias("_ln_l4"), col("eq_ta").alias("_eq_l4"), col("npl_ln").alias("_npl_l4")]
+                  simple π 6/6 ["CERT", "Q", "ASSET", "LNLSGR", ... 2 other columns]
+                    CACHE[id: b7e0525b-8ec3-4197-b3a1-6bd750d76cb2]
+              END LEFT JOIN
+            RIGHT PLAN ON: [col("CERT"), col("Q")]
+              SELECT [col("CERT"), (col("Q") + 1), col("roa_q").alias("_roa_l1")]
+                simple π 3/3 ["CERT", "Q", "roa_q"]
+                  CACHE[id: b7e0525b-8ec3-4197-b3a1-6bd750d76cb2]
+            END LEFT JOIN
+          RIGHT PLAN ON: [col("CERT"), col("Q")]
+            SELECT [col("CERT"), (col("Q") + 2), col("roa_q").alias("_roa_l2")]
+              simple π 3/3 ["CERT", "Q", "roa_q"]
+                CACHE[id: b7e0525b-8ec3-4197-b3a1-6bd750d76cb2]
+          END LEFT JOIN
+        RIGHT PLAN ON: [col("CERT"), col("Q")]
+          SELECT [col("CERT"), (col("Q") + 3), col("roa_q").alias("_roa_l3")]
+            simple π 3/3 ["CERT", "Q", "roa_q"]
+              CACHE[id: b7e0525b-8ec3-4197-b3a1-6bd750d76cb2]
+        END LEFT JOIN
+  RIGHT PLAN ON: [col("Q")]
+    AGGREGATE[maintain_order: false]
+      [(col("roa_q") < 0.0).mean().alias("sys_neg_roa_share"), col("npl_ln").median().alias("sys_npl_median")] BY [col("Q")]
+      FROM
+      simple π 3/3 ["Q", "roa_q", "npl_ln"]
+        CACHE[id: b7e0525b-8ec3-4197-b3a1-6bd750d76cb2]
+  END LEFT JOIN

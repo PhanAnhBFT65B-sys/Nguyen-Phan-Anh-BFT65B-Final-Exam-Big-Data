@@ -1,0 +1,15 @@
+rows 1,682,738 cols 41; in-memory polars 523.7 MB; pandas 572.2 MB
+{'layout': 'csv', 'size_mb': 527.4, 'files': 1, 'write_s': 45.63, 'polars_full_s': 1.179, 'polars_4cols_s': 0.421, 'polars_2008_4cols_s': 0.42, 'pandas_full_s': 0.867, 'pandas_4cols_s': 1.08}
+{'layout': 'csv_gzip', 'size_mb': 203.7, 'files': 1, 'write_s': 252.1, 'polars_full_s': 1.777, 'polars_4cols_s': 1.714, 'polars_2008_4cols_s': 1.59, 'pandas_full_s': 5.678, 'pandas_4cols_s': 3.698}
+{'layout': 'parquet_snappy_1file', 'size_mb': 264.7, 'files': 1, 'write_s': 0.64, 'polars_full_s': 0.209, 'polars_4cols_s': 0.016, 'polars_2008_4cols_s': 0.004, 'pandas_full_s': 0.331, 'pandas_4cols_s': 0.039}
+{'layout': 'parquet_zstd_1file_sorted', 'size_mb': 190.1, 'files': 1, 'write_s': 0.9, 'polars_full_s': 0.281, 'polars_4cols_s': 0.02, 'polars_2008_4cols_s': 0.005, 'pandas_full_s': 0.381, 'pandas_4cols_s': 0.035}
+{'layout': 'parquet_zstd_by_year', 'size_mb': 192.0, 'files': 43, 'write_s': 0.9, 'polars_full_s': 0.294, 'polars_4cols_s': 0.037, 'polars_2008_4cols_s': 0.007}
+{'layout': 'parquet_zstd_by_quarter', 'size_mb': 239.3, 'files': 170, 'write_s': 0.13, 'polars_full_s': 0.278, 'polars_4cols_s': 0.044, 'polars_2008_4cols_s': 0.006}
+                      layout  size_mb  files  write_s  polars_full_s  polars_4cols_s  polars_2008_4cols_s  pandas_full_s  pandas_4cols_s  size_vs_csv  full_read_speedup_vs_csv
+0                        csv    527.4      1    45.63          1.179           0.421                0.420          0.867           1.080        1.000                       1.0
+1                   csv_gzip    203.7      1   252.10          1.777           1.714                1.590          5.678           3.698        0.386                       0.7
+2       parquet_snappy_1file    264.7      1     0.64          0.209           0.016                0.004          0.331           0.039        0.502                       5.6
+3  parquet_zstd_1file_sorted    190.1      1     0.90          0.281           0.020                0.005          0.381           0.035        0.360                       4.2
+4       parquet_zstd_by_year    192.0     43     0.90          0.294           0.037                0.007            NaN             NaN        0.364                       4.0
+5    parquet_zstd_by_quarter    239.3    170     0.13          0.278           0.044                0.006            NaN             NaN        0.454                       4.2
+{'rows': 1682738, 'cols': 41, 'polars_mem_mb': 526.4, 'pandas_mem_mb': np.float64(572.2), 'csv_type_changes': {'CERT': ('Int32', 'Int64'), 'REPDTE': ('String', 'Int64'), 'P3ASSET': ('Float64', 'String')}, 'sorted_file_row_groups': 17, 'row_groups_touching_2008': 1}

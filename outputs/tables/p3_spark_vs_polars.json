@@ -1,0 +1,15 @@
+{
+ "rows_polars": 1681643,
+ "rows_spark": 1681643,
+ "rows_only_in_one_engine": 0,
+ "y_mismatch": 0,
+ "positives_polars": 12496,
+ "positives_spark": 12496,
+ "netinc_q_max_abs_diff": 0.0,
+ "netinc_q_null_mismatch": 0,
+ "spark_T1_s_incl_jvm_warm": 50.39,
+ "spark_T3_s": 48.09,
+ "polars_T1_s": 0.44,
+ "spark_version": "4.3.0",
+ "shuffle_partitions": "8"
+}

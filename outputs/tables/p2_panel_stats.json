@@ -1,0 +1,24 @@
+{
+ "build_seconds": 2.84,
+ "rows": 1681643,
+ "banks": 24064,
+ "rows_label_complete": 1664114,
+ "positives": 12485,
+ "positive_rate_pct": 0.75,
+ "failing_banks_labelled": 3216,
+ "exit_types": {
+  "active": 4313,
+  "failure": 3080,
+  "merger/absorption": 16476,
+  "other exit": 195
+ },
+ "decumulated_null_share": {
+  "NETINC": 0.0059,
+  "INTINC": 0.0073,
+  "EINTEXP": 0.0066,
+  "NONII": 0.0059,
+  "NONIX": 0.0059,
+  "ELNATR": 0.0286,
+  "NTLNLS": 0.0499
+ }
+}

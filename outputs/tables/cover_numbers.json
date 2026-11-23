@@ -1,0 +1,21 @@
+{
+ "download_method": "FDIC BankFind public API (api.fdic.gov/banks), src/s01_download.py",
+ "download_date_utc": "2026-11-23",
+ "api_index": "risview_20261116221646",
+ "financials_rows": 1682738,
+ "quarters": 170,
+ "banks": 24064,
+ "failures_rows": 4117,
+ "institutions_rows": 27838,
+ "clean_panel_rows": 1681643,
+ "dev_period": [
+  "1984-03-31",
+  "2006-12-31"
+ ],
+ "test_period": [
+  "2008-03-31",
+  "2025-06-30"
+ ],
+ "dev_failing_banks": 2658,
+ "test_failing_banks": 558
+}

@@ -1,0 +1,10 @@
+{
+ "quarters": 170,
+ "rows": 1682738,
+ "api_total_same_range": 1682738,
+ "distinct_cert": 24064,
+ "duplicate_keys": 0,
+ "incomplete_quarters": [],
+ "first_q": "19840331",
+ "last_q": "20260630"
+}

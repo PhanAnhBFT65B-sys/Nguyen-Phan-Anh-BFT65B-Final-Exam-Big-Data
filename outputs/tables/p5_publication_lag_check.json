@@ -1,0 +1,6 @@
+{
+ "positives_failing_within_60d_of_report": 410,
+ "share_of_positives": 0.1879871618523613,
+ "pr_auc_without_them": 0.4635777459326904,
+ "roc_auc_without_them": 0.9782738336475155
+}

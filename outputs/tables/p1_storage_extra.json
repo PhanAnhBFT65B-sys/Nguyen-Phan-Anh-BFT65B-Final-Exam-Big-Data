@@ -1,0 +1,22 @@
+{
+ "rows": 1682738,
+ "cols": 41,
+ "polars_mem_mb": 526.4,
+ "pandas_mem_mb": 572.2,
+ "csv_type_changes": {
+  "CERT": [
+   "Int32",
+   "Int64"
+  ],
+  "REPDTE": [
+   "String",
+   "Int64"
+  ],
+  "P3ASSET": [
+   "Float64",
+   "String"
+  ]
+ },
+ "sorted_file_row_groups": 17,
+ "row_groups_touching_2008": 1
+}

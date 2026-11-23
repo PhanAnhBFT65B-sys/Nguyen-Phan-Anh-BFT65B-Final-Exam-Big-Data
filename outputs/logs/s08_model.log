@@ -1,0 +1,124 @@
+{
+ "dev": [
+  "1984-03-31",
+  "2006-12-31"
+ ],
+ "test": [
+  "2008-03-31",
+  "2025-06-30"
+ ],
+ "dev_rows": 1193914,
+ "dev_pos_rows": 10251,
+ "dev_failing_banks": 2658,
+ "gap_rows_dropped": 34754,
+ "test_rows": 435446,
+ "test_pos_rows": 2181,
+ "test_failing_banks": 558
+}
+B0_logit_3ratios mean PR-AUC 0.3253894316656184
+M1_logit_C0.1 mean PR-AUC 0.37240403227443103
+M1_logit_C1 mean PR-AUC 0.3735909162164818
+M2_hgb_lr0.05_l15 mean PR-AUC 0.44634149072969387
+M2_hgb_lr0.05_l31 mean PR-AUC 0.46004032831909714
+M2_hgb_lr0.1_l15 mean PR-AUC 0.43658892791313564
+                   pr_auc_mean  pr_auc_min  ...  brier_mean  recall_top2_mean
+model                                       ...                              
+M2_hgb_lr0.05_l31     0.460040    0.210658  ...    0.010547          0.596170
+M2_hgb_lr0.05_l15     0.446341    0.177322  ...    0.010442          0.585868
+M2_hgb_lr0.1_l15      0.436589    0.171625  ...    0.010637          0.584590
+M1_logit_C1           0.373591    0.103453  ...    0.035194          0.597963
+M1_logit_C0.1         0.372404    0.102540  ...    0.034886          0.597425
+B0_logit_3ratios      0.325389    0.104088  ...    0.038803          0.517775
+
+[6 rows x 5 columns]
+FROZEN: {
+ "model": "M2_hgb_lr0.05_l31",
+ "features": [
+  "log_asset",
+  "eq_ta",
+  "tce_ta",
+  "lev_pca",
+  "trbc_pca",
+  "npl_ln",
+  "nonaccr_ta",
+  "pd30_ta",
+  "pd90_ta",
+  "ore_ta",
+  "alll_ln",
+  "texas",
+  "roa_q",
+  "nim_q",
+  "cof_q",
+  "prov_ln_q",
+  "nco_ln_q",
+  "eff_q",
+  "liq_ta",
+  "bro_dep",
+  "whsl_ta",
+  "core_ta",
+  "ln_dep",
+  "re_ln",
+  "constr_ln",
+  "cre_eq",
+  "ci_ln",
+  "con_ln",
+  "asset_growth_yoy",
+  "loan_growth_yoy",
+  "d_eq_ta_yoy",
+  "d_npl_ln_yoy",
+  "roa_4q",
+  "roa_4q_min",
+  "sys_neg_roa_share",
+  "sys_npl_median"
+ ],
+ "threshold": 0.007181396943215892,
+ "C_FN_median_DIF_loss_kUSD": 8867.94696,
+ "C_FP_assumed_kUSD": 250.0,
+ "dev_median_loss_rate": 0.20160683205923363,
+ "split": {
+  "dev": [
+   "1984-03-31",
+   "2006-12-31"
+  ],
+  "test": [
+   "2008-03-31",
+   "2025-06-30"
+  ],
+  "dev_rows": 1193914,
+  "dev_pos_rows": 10251,
+  "dev_failing_banks": 2658,
+  "gap_rows_dropped": 34754,
+  "test_rows": 435446,
+  "test_pos_rows": 2181,
+  "test_failing_banks": 558
+ },
+ "val_years": [
+  1988,
+  1990,
+  1992,
+  2001
+ ],
+ "seed": 42,
+ "frozen_utc": "2026-11-23T10:31:03Z",
+ "sha256": "14721b55d1307f64dade589c52c046ce709f99e0472492c9c8a260a241a9ba43"
+}
+                                            0                  1
+n                                      435446             435446
+pos                                      2181               2181
+pr_auc                               0.527038           0.573252
+roc_auc                              0.974452            0.98019
+brier                                0.022975           0.003355
+recall_top2pct                       0.849152           0.860614
+precision_top2pct                    0.212654           0.215524
+model                        B0_logit_3ratios  M2_hgb_lr0.05_l31
+threshold                                 NaN           0.007181
+tp                                        NaN             1878.0
+fp                                        NaN             6876.0
+fn                                        NaN              303.0
+tn                                        NaN           426389.0
+recall_at_thr                             NaN           0.861073
+precision_at_thr                          NaN           0.214531
+flag_rate_at_thr                          NaN           0.020104
+cost_at_thr_kUSD                          NaN      4405987.92888
+cost_flag_nobody_kUSD                     NaN     19340992.31976
+failing_banks_flagged_share               NaN           0.944444

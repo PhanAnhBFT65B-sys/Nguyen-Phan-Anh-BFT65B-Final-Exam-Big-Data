@@ -1,0 +1,8 @@
+{'reps': 300, 'pr_auc_point': 0.5732516994568204, 'pr_auc_ci95': [0.5337318406357716, 0.6076200545433725], 'roc_auc_ci95': [0.9736777150979614, 0.9857395589315625]}
+{'positives_failing_within_60d_of_report': 410, 'share_of_positives': 0.1879871618523613, 'pr_auc_without_them': 0.4635777459326904, 'roc_auc_without_them': 0.9782738336475155}
+   Q_TO_FAIL  pos_rows  recall_at_thr
+0        1.0       551       0.945554
+1        2.0       554       0.906137
+2        3.0       546       0.847985
+3        4.0       530       0.739623
+{'download_method': 'FDIC BankFind public API (api.fdic.gov/banks), src/s01_download.py', 'download_date_utc': '2026-11-23', 'api_index': 'risview_20261116221646', 'financials_rows': 1682738, 'quarters': 170, 'banks': 24064, 'failures_rows': 4117, 'institutions_rows': 27838, 'clean_panel_rows': 1681643, 'dev_period': ['1984-03-31', '2006-12-31'], 'test_period': ['2008-03-31', '2025-06-30'], 'dev_failing_banks': 2658, 'test_failing_banks': 558}

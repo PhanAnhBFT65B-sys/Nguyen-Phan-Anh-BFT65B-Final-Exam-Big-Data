@@ -1,0 +1,24 @@
+{
+ "rows": 1681643,
+ "features": 36,
+ "leakage_checks": [
+  {
+   "cut": "1990-12-31",
+   "banks": 15418,
+   "features_checked": 36,
+   "status": "PASS"
+  },
+  {
+   "cut": "2008-12-31",
+   "banks": 8395,
+   "features_checked": 36,
+   "status": "PASS"
+  },
+  {
+   "cut": "2023-03-31",
+   "banks": 4740,
+   "features_checked": 36,
+   "status": "PASS"
+  }
+ ]
+}

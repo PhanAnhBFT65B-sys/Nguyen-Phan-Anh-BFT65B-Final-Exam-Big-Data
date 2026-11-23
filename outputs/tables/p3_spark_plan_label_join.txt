@@ -1,0 +1,34 @@
+AdaptiveSparkPlan isFinalPlan=false
++- HashAggregate(keys=[CERT#0, REPDTE#42], functions=[], output=[CERT#0, REPDTE#42, y#134])
+   +- Project [CERT#0, REPDTE#42]
+      +- BroadcastHashJoin [CERT#0], [CERT#130], Inner, BuildRight, ((FAIL_DATE#129 > REPDTE#42) AND (FAIL_DATE#129 <= last_day(add_months(REPDTE#42, 12)))), false, false
+         :- Project [CERT#0, REPDTE#42]
+         :  +- Filter (isnull(_FC#113) OR (REPDTE#42 < _FC#113))
+         :     +- BroadcastHashJoin [CERT#0], [CERT#112], LeftOuter, BuildRight, false, false
+         :        :- HashAggregate(keys=[CERT#0, REPDTE#42], functions=[], output=[CERT#0, REPDTE#42])
+         :        :  +- Exchange hashpartitioning(CERT#0, REPDTE#42, 8), ENSURE_REQUIREMENTS, [plan_id=2229]
+         :        :     +- HashAggregate(keys=[CERT#0, REPDTE#42], functions=[], output=[CERT#0, REPDTE#42])
+         :        :        +- Project [CERT#0, cast(gettimestamp(REPDTE#1, yyyyMMdd, TimestampType, try_to_date, Some(UTC), true) as date) AS REPDTE#42]
+         :        :           +- Filter ((((isnotnull(CERT#0) AND isnotnull(REPDTE#1)) AND isnotnull(ASSET#3)) AND (ASSET#3 > 0.0)) AND isnotnull(cast(gettimestamp(REPDTE#1, yyyyMMdd, TimestampType, try_to_date, Some(UTC), true) as date)))
+         :        :              +- FileScan parquet [CERT#0,REPDTE#1,ASSET#3] Batched: true, DataFilters: [isnotnull(CERT#0), isnotnull(REPDTE#1), isnotnull(ASSET#3), (ASSET#3 > 0.0), isnotnull(cast(gett..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/home/user/fdic-ews/data/bench/panel_zstd.parquet], PartitionFilters: [], PushedFilters: [IsNotNull(CERT), IsNotNull(REPDTE), IsNotNull(ASSET), GreaterThan(ASSET,0.0)], ReadSchema: struct<CERT:int,REPDTE:string,ASSET:double>
+         :        +- BroadcastExchange HashedRelationBroadcastMode(List(cast(input[0, int, true] as bigint)),false), [plan_id=2263]
+         :           +- HashAggregate(keys=[CERT#112], functions=[min(FAIL_DATE#111)], output=[CERT#112, _FC#113])
+         :              +- Exchange hashpartitioning(CERT#112, 8), ENSURE_REQUIREMENTS, [plan_id=2260]
+         :                 +- SortAggregate(key=[CERT#112], functions=[partial_min(FAIL_DATE#111)], output=[CERT#112, min#577])
+         :                    +- Project [CERT#112, FAIL_DATE#111]
+         :                       +- Filter (isnotnull(RESTYPE#4717) AND (RESTYPE#4717 = FAILURE))
+         :                          +- SortAggregate(key=[CERT#112, FAIL_DATE#111], functions=[first(RESTYPE#107, false)], output=[CERT#112, FAIL_DATE#111, RESTYPE#4717])
+         :                             +- Sort [CERT#112 ASC NULLS FIRST, FAIL_DATE#111 ASC NULLS FIRST], false, 0
+         :                                +- Exchange hashpartitioning(CERT#112, FAIL_DATE#111, 8), ENSURE_REQUIREMENTS, [plan_id=2234]
+         :                                   +- SortAggregate(key=[CERT#112, FAIL_DATE#111], functions=[partial_first(RESTYPE#107, false)], output=[CERT#112, FAIL_DATE#111, first#4722, valueSet#4723])
+         :                                      +- Sort [CERT#112 ASC NULLS FIRST, FAIL_DATE#111 ASC NULLS FIRST], false, 0
+         :                                         +- Project [cast(CERT#99 as int) AS CERT#112, cast(gettimestamp(FAILDATE#102, M/d/yyyy, TimestampType, try_to_date, Some(UTC), true) as date) AS FAIL_DATE#111, RESTYPE#107]
+         :                                            +- Filter ((isnotnull(CERT#99) AND isnotnull(cast(CERT#99 as int))) AND (gettimestamp(FAILDATE#102, M/d/yyyy, TimestampType, try_to_date, Some(UTC), true) >= 1984-01-01 00:00:00))
+         :                                               +- FileScan parquet [CERT#99,FAILDATE#102,RESTYPE#107] Batched: true, DataFilters: [isnotnull(CERT#99), isnotnull(cast(CERT#99 as int)), (gettimestamp(FAILDATE#102, M/d/yyyy, Times..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/home/user/fdic-ews/data/raw/failures.parquet], PartitionFilters: [], PushedFilters: [IsNotNull(CERT)], ReadSchema: struct<CERT:string,FAILDATE:string,RESTYPE:string>
+         +- BroadcastExchange HashedRelationBroadcastMode(List(cast(input[0, int, true] as bigint)),false), [plan_id=2251]
+            +- HashAggregate(keys=[CERT#130, FAIL_DATE#129], functions=[], output=[CERT#130, FAIL_DATE#129])
+               +- Exchange hashpartitioning(CERT#130, FAIL_DATE#129, 8), ENSURE_REQUIREMENTS, [plan_id=2248]
+                  +- HashAggregate(keys=[CERT#130, FAIL_DATE#129], functions=[], output=[CERT#130, FAIL_DATE#129])
+                     +- Project [cast(CERT#118 as int) AS CERT#130, cast(gettimestamp(FAILDATE#121, M/d/yyyy, TimestampType, try_to_date, Some(UTC), true) as date) AS FAIL_DATE#129]
+                        +- Filter (((isnotnull(CERT#118) AND isnotnull(cast(CERT#118 as int))) AND (gettimestamp(FAILDATE#121, M/d/yyyy, TimestampType, try_to_date, Some(UTC), true) >= 1984-01-01 00:00:00)) AND isnotnull(cast(gettimestamp(FAILDATE#121, M/d/yyyy, TimestampType, try_to_date, Some(UTC), true) as date)))
+                           +- FileScan parquet [CERT#118,FAILDATE#121] Batched: true, DataFilters: [isnotnull(CERT#118), isnotnull(cast(CERT#118 as int)), (gettimestamp(FAILDATE#121, M/d/yyyy, Tim..., Format: Parquet, Location: InMemoryFileIndex(1 paths)[file:/home/user/fdic-ews/data/raw/failures.parquet], PartitionFilters: [], PushedFilters: [IsNotNull(CERT)], ReadSchema: struct<CERT:string,FAILDATE:string>

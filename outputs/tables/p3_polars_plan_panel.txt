@@ -1,0 +1,213 @@
+=== NAIVE (unoptimised) PLAN ===
+SELECT [col("CERT"), col("REPDTE"), col("STNAME"), col("ASSET"), col("DEP"), col("DEPDOM"), col("EQ"), col("BRO"), col("CHBAL"), col("SC"), col("LNLSGR"), col("LNLSNET"), col("LNRE"), col("LNCI"), col("LNCON"), col("LNATRES"), col("NCLNLS"), col("P3ASSET"), col("P9ASSET"), col("NAASSET"), col("NTLNLS"), col("ORE"), col("NETINC"), col("INTINC"), col("EINTEXP"), col("NONII"), col("NONIX"), col("ELNATR"), col("ROA"), col("ROE"), col("NIMY"), col("RBC1AAJ"), col("RBCRWAJ"), col("LNRECONS"), col("LNRENRES"), col("LNREMULT"), col("LNRERES"), col("COREDEP"), col("FREPP"), col("OTHBOR"), col("INTAN"), col("Q"), col("YEAR"), col("NETINC_Q"), col("INTINC_Q"), col("EINTEXP_Q"), col("NONII_Q"), col("NONIX_Q"), col("ELNATR_Q"), col("NTLNLS_Q"), col("GAP_PREV_Q"), col("NEXT_FAIL_DATE"), col("NEXT_FAIL_TYPE"), col("y"), col("label_complete"), col("Q_TO_FAIL")]
+  SELECT [col("CERT"), col("REPDTE"), col("STNAME"), col("ASSET"), col("DEP"), col("DEPDOM"), col("EQ"), col("BRO"), col("CHBAL"), col("SC"), col("LNLSGR"), col("LNLSNET"), col("LNRE"), col("LNCI"), col("LNCON"), col("LNATRES"), col("NCLNLS"), col("P3ASSET"), col("P9ASSET"), col("NAASSET"), col("NTLNLS"), col("ORE"), col("NETINC"), col("INTINC"), col("EINTEXP"), col("NONII"), col("NONIX"), col("ELNATR"), col("ROA"), col("ROE"), col("NIMY"), col("RBC1AAJ"), col("RBCRWAJ"), col("LNRECONS"), col("LNRENRES"), col("LNREMULT"), col("LNRERES"), col("COREDEP"), col("FREPP"), col("OTHBOR"), col("INTAN"), col("Q"), col("YEAR"), col("NETINC_Q"), col("INTINC_Q"), col("EINTEXP_Q"), col("NONII_Q"), col("NONIX_Q"), col("ELNATR_Q"), col("NTLNLS_Q"), col("GAP_PREV_Q"), col("FAIL_DATE").alias("NEXT_FAIL_DATE"), col("RESTYPE").alias("NEXT_FAIL_TYPE"), col("_H"), col("y"), col("label_complete"), col("Q_TO_FAIL")]
+     WITH_COLUMNS:
+     [(col("FAIL_DATE").is_not_null() & (col("FAIL_DATE") <= col("_H"))).strict_cast(Int8).alias("y"), (col("REPDTE") <= 2025-06-30).alias("label_complete"), ((((col("FAIL_DATE").dt.year() * 4) + col("FAIL_DATE").dt.quarter().cast(Int32)) - 1) - col("Q")).alias("Q_TO_FAIL")] 
+       WITH_COLUMNS:
+       [col("REPDTE").dt.offset_by(["12mo"]).dt.month_end().alias("_H")] 
+        LEFT JOIN:
+        LEFT PLAN ON: [col("CERT"), col("REPDTE")]
+          SELECT [col("CERT"), col("REPDTE"), col("STNAME"), col("ASSET"), col("DEP"), col("DEPDOM"), col("EQ"), col("BRO"), col("CHBAL"), col("SC"), col("LNLSGR"), col("LNLSNET"), col("LNRE"), col("LNCI"), col("LNCON"), col("LNATRES"), col("NCLNLS"), col("P3ASSET"), col("P9ASSET"), col("NAASSET"), col("NTLNLS"), col("ORE"), col("NETINC"), col("INTINC"), col("EINTEXP"), col("NONII"), col("NONIX"), col("ELNATR"), col("ROA"), col("ROE"), col("NIMY"), col("RBC1AAJ"), col("RBCRWAJ"), col("LNRECONS"), col("LNRENRES"), col("LNREMULT"), col("LNRERES"), col("COREDEP"), col("FREPP"), col("OTHBOR"), col("INTAN"), col("Q"), col("YEAR"), col("NETINC_Q"), col("INTINC_Q"), col("EINTEXP_Q"), col("NONII_Q"), col("NONIX_Q"), col("ELNATR_Q"), col("NTLNLS_Q"), col("GAP_PREV_Q")]
+            FILTER (col("_FIRST_CLOSURE").is_null() | (col("REPDTE") < col("_FIRST_CLOSURE")))
+            FROM
+              LEFT JOIN:
+              LEFT PLAN ON: [col("CERT")]
+                 WITH_COLUMNS:
+                 [when(col("INTINC_Q") < 0.0).then(null.cast(Float64)).otherwise(col("INTINC_Q")).alias("INTINC_Q"), (col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))).alias("GAP_PREV_Q")] 
+                   WITH_COLUMNS:
+                   [when(col("REPDTE").dt.quarter() == 1).then(col("NETINC")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("NETINC") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("NETINC").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NETINC_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("INTINC")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("INTINC") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("INTINC").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("INTINC_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("EINTEXP")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("EINTEXP") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("EINTEXP").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("EINTEXP_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("NONII")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("NONII") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("NONII").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NONII_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("NONIX")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("NONIX") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("NONIX").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NONIX_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("ELNATR")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("ELNATR") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("ELNATR").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("ELNATR_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("NTLNLS")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("NTLNLS") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("NTLNLS").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NTLNLS_Q")] 
+                    FILTER (((col("CERT") == col("CERT").shift([dyn int: 1])) & (col("Q") == col("Q").shift([dyn int: 1])))).fill_null([false]).not()
+                    FROM
+                      SORT BY [col("CERT"), col("Q")]
+                         WITH_COLUMNS:
+                         [when(col("RBC1AAJ") == 0.0).then(null.cast(Float64)).otherwise(col("RBC1AAJ")).alias("RBC1AAJ"), when(col("RBCRWAJ") == 0.0).then(null.cast(Float64)).otherwise(col("RBCRWAJ")).alias("RBCRWAJ")] 
+                           WITH_COLUMNS:
+                           [when(col("DEP") < 0.0).then(null.cast(Float64)).otherwise(col("DEP")).alias("DEP"), when(col("LNLSGR") < 0.0).then(null.cast(Float64)).otherwise(col("LNLSGR")).alias("LNLSGR"), when(col("CHBAL") < 0.0).then(null.cast(Float64)).otherwise(col("CHBAL")).alias("CHBAL"), when(col("SC") < 0.0).then(null.cast(Float64)).otherwise(col("SC")).alias("SC"), when(col("LNATRES") < 0.0).then(null.cast(Float64)).otherwise(col("LNATRES")).alias("LNATRES"), when(col("NCLNLS") < 0.0).then(null.cast(Float64)).otherwise(col("NCLNLS")).alias("NCLNLS"), when(col("ORE") < 0.0).then(null.cast(Float64)).otherwise(col("ORE")).alias("ORE"), when(col("BRO") < 0.0).then(null.cast(Float64)).otherwise(col("BRO")).alias("BRO"), when(col("DEPDOM") < 0.0).then(null.cast(Float64)).otherwise(col("DEPDOM")).alias("DEPDOM"), when(col("LNRE") < 0.0).then(null.cast(Float64)).otherwise(col("LNRE")).alias("LNRE"), when(col("LNCI") < 0.0).then(null.cast(Float64)).otherwise(col("LNCI")).alias("LNCI"), when(col("LNCON") < 0.0).then(null.cast(Float64)).otherwise(col("LNCON")).alias("LNCON"), when(col("P3ASSET") < 0.0).then(null.cast(Float64)).otherwise(col("P3ASSET")).alias("P3ASSET"), when(col("P9ASSET") < 0.0).then(null.cast(Float64)).otherwise(col("P9ASSET")).alias("P9ASSET"), when(col("NAASSET") < 0.0).then(null.cast(Float64)).otherwise(col("NAASSET")).alias("NAASSET"), when(col("INTAN") < 0.0).then(null.cast(Float64)).otherwise(col("INTAN")).alias("INTAN"), when(col("LNRECONS") < 0.0).then(null.cast(Float64)).otherwise(col("LNRECONS")).alias("LNRECONS"), when(col("LNRENRES") < 0.0).then(null.cast(Float64)).otherwise(col("LNRENRES")).alias("LNRENRES"), when(col("LNREMULT") < 0.0).then(null.cast(Float64)).otherwise(col("LNREMULT")).alias("LNREMULT"), when(col("LNRERES") < 0.0).then(null.cast(Float64)).otherwise(col("LNRERES")).alias("LNRERES"), when(col("COREDEP") < 0.0).then(null.cast(Float64)).otherwise(col("COREDEP")).alias("COREDEP"), when(col("FREPP") < 0.0).then(null.cast(Float64)).otherwise(col("FREPP")).alias("FREPP"), when(col("OTHBOR") < 0.0).then(null.cast(Float64)).otherwise(col("OTHBOR")).alias("OTHBOR")] 
+                             WITH_COLUMNS:
+                             [when(col("EQ") > col("ASSET")).then(null.cast(Float64)).otherwise(col("EQ")).alias("EQ")] 
+                               WITH_COLUMNS:
+                               [(((col("REPDTE").dt.year() * 4) + col("REPDTE").dt.quarter().cast(Int32)) - 1).alias("Q"), col("REPDTE").dt.year().strict_cast(Int16).alias("YEAR")] 
+                                 WITH_COLUMNS:
+                                 [col("REPDTE").str.strptime(["raise"])] 
+                                  FILTER col("ASSET") > 0.0
+                                  FROM
+                                    FILTER col("ASSET").is_not_null()
+                                    FROM
+                                      FILTER col("REPDTE").is_not_null()
+                                      FROM
+                                        FILTER col("CERT").is_not_null()
+                                        FROM
+                                          Parquet SCAN [/home/user/fdic-ews/data/raw/financials/REPDTE=19840331/part-0.parquet, ... 169 other sources]
+                                          PROJECT */41 COLUMNS
+                                          ESTIMATED ROWS: 1740138
+              RIGHT PLAN ON: [col("CERT")]
+                AGGREGATE[maintain_order: false]
+                  [col("FAIL_DATE").min().alias("_FIRST_CLOSURE")] BY [col("CERT")]
+                  FROM
+                  FILTER col("RESTYPE") == "FAILURE"
+                  FROM
+                    SORT BY [col("FAIL_DATE")]
+                      UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT", "FAIL_DATE"])
+                        SELECT [col("CERT"), col("FAIL_DATE"), col("RESTYPE"), col("COST"), col("QBFASSET")]
+                          FILTER col("FAIL_DATE") >= 1984-01-01
+                          FROM
+                            FILTER col("CERT").is_not_null()
+                            FROM
+                               WITH_COLUMNS:
+                               [col("FAILDATE").str.strptime(["raise"]).alias("FAIL_DATE"), col("CERT").strict_cast(Int32), col("COST").cast(Float64), col("QBFASSET").cast(Float64)] 
+                                Parquet SCAN [/home/user/fdic-ews/data/raw/failures.parquet]
+                                PROJECT */11 COLUMNS
+                                ESTIMATED ROWS: 4117
+              END LEFT JOIN
+        RIGHT PLAN ON: [col("CERT"), col("REPDTE")]
+          AGGREGATE[maintain_order: false]
+            [col("FAIL_DATE").min(), col("RESTYPE").min_by[total, nulls_smallest]([col("FAIL_DATE")])] BY [col("CERT"), col("REPDTE")]
+            FROM
+            FILTER col("FAIL_DATE") > col("REPDTE")
+            FROM
+              INNER JOIN:
+              LEFT PLAN ON: [col("CERT")]
+                SELECT [col("CERT"), col("REPDTE")]
+                  SELECT [col("CERT"), col("REPDTE"), col("STNAME"), col("ASSET"), col("DEP"), col("DEPDOM"), col("EQ"), col("BRO"), col("CHBAL"), col("SC"), col("LNLSGR"), col("LNLSNET"), col("LNRE"), col("LNCI"), col("LNCON"), col("LNATRES"), col("NCLNLS"), col("P3ASSET"), col("P9ASSET"), col("NAASSET"), col("NTLNLS"), col("ORE"), col("NETINC"), col("INTINC"), col("EINTEXP"), col("NONII"), col("NONIX"), col("ELNATR"), col("ROA"), col("ROE"), col("NIMY"), col("RBC1AAJ"), col("RBCRWAJ"), col("LNRECONS"), col("LNRENRES"), col("LNREMULT"), col("LNRERES"), col("COREDEP"), col("FREPP"), col("OTHBOR"), col("INTAN"), col("Q"), col("YEAR"), col("NETINC_Q"), col("INTINC_Q"), col("EINTEXP_Q"), col("NONII_Q"), col("NONIX_Q"), col("ELNATR_Q"), col("NTLNLS_Q"), col("GAP_PREV_Q")]
+                    FILTER (col("_FIRST_CLOSURE").is_null() | (col("REPDTE") < col("_FIRST_CLOSURE")))
+                    FROM
+                      LEFT JOIN:
+                      LEFT PLAN ON: [col("CERT")]
+                         WITH_COLUMNS:
+                         [when(col("INTINC_Q") < 0.0).then(null.cast(Float64)).otherwise(col("INTINC_Q")).alias("INTINC_Q"), (col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))).alias("GAP_PREV_Q")] 
+                           WITH_COLUMNS:
+                           [when(col("REPDTE").dt.quarter() == 1).then(col("NETINC")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("NETINC") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("NETINC").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NETINC_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("INTINC")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("INTINC") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("INTINC").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("INTINC_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("EINTEXP")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("EINTEXP") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("EINTEXP").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("EINTEXP_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("NONII")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("NONII") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("NONII").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NONII_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("NONIX")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("NONIX") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("NONIX").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NONIX_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("ELNATR")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("ELNATR") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("ELNATR").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("ELNATR_Q"), when(col("REPDTE").dt.quarter() == 1).then(col("NTLNLS")).otherwise(when(((col("Q") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32))) == 1) & ((col("Q") // 4) == (when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("Q").shift([dyn int: 1])).otherwise(null.cast(Int32)) // 4))).then(col("NTLNLS") - when(col("CERT") == col("CERT").shift([dyn int: 1])).then(col("NTLNLS").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NTLNLS_Q")] 
+                            FILTER (((col("CERT") == col("CERT").shift([dyn int: 1])) & (col("Q") == col("Q").shift([dyn int: 1])))).fill_null([false]).not()
+                            FROM
+                              SORT BY [col("CERT"), col("Q")]
+                                 WITH_COLUMNS:
+                                 [when(col("RBC1AAJ") == 0.0).then(null.cast(Float64)).otherwise(col("RBC1AAJ")).alias("RBC1AAJ"), when(col("RBCRWAJ") == 0.0).then(null.cast(Float64)).otherwise(col("RBCRWAJ")).alias("RBCRWAJ")] 
+                                   WITH_COLUMNS:
+                                   [when(col("DEP") < 0.0).then(null.cast(Float64)).otherwise(col("DEP")).alias("DEP"), when(col("LNLSGR") < 0.0).then(null.cast(Float64)).otherwise(col("LNLSGR")).alias("LNLSGR"), when(col("CHBAL") < 0.0).then(null.cast(Float64)).otherwise(col("CHBAL")).alias("CHBAL"), when(col("SC") < 0.0).then(null.cast(Float64)).otherwise(col("SC")).alias("SC"), when(col("LNATRES") < 0.0).then(null.cast(Float64)).otherwise(col("LNATRES")).alias("LNATRES"), when(col("NCLNLS") < 0.0).then(null.cast(Float64)).otherwise(col("NCLNLS")).alias("NCLNLS"), when(col("ORE") < 0.0).then(null.cast(Float64)).otherwise(col("ORE")).alias("ORE"), when(col("BRO") < 0.0).then(null.cast(Float64)).otherwise(col("BRO")).alias("BRO"), when(col("DEPDOM") < 0.0).then(null.cast(Float64)).otherwise(col("DEPDOM")).alias("DEPDOM"), when(col("LNRE") < 0.0).then(null.cast(Float64)).otherwise(col("LNRE")).alias("LNRE"), when(col("LNCI") < 0.0).then(null.cast(Float64)).otherwise(col("LNCI")).alias("LNCI"), when(col("LNCON") < 0.0).then(null.cast(Float64)).otherwise(col("LNCON")).alias("LNCON"), when(col("P3ASSET") < 0.0).then(null.cast(Float64)).otherwise(col("P3ASSET")).alias("P3ASSET"), when(col("P9ASSET") < 0.0).then(null.cast(Float64)).otherwise(col("P9ASSET")).alias("P9ASSET"), when(col("NAASSET") < 0.0).then(null.cast(Float64)).otherwise(col("NAASSET")).alias("NAASSET"), when(col("INTAN") < 0.0).then(null.cast(Float64)).otherwise(col("INTAN")).alias("INTAN"), when(col("LNRECONS") < 0.0).then(null.cast(Float64)).otherwise(col("LNRECONS")).alias("LNRECONS"), when(col("LNRENRES") < 0.0).then(null.cast(Float64)).otherwise(col("LNRENRES")).alias("LNRENRES"), when(col("LNREMULT") < 0.0).then(null.cast(Float64)).otherwise(col("LNREMULT")).alias("LNREMULT"), when(col("LNRERES") < 0.0).then(null.cast(Float64)).otherwise(col("LNRERES")).alias("LNRERES"), when(col("COREDEP") < 0.0).then(null.cast(Float64)).otherwise(col("COREDEP")).alias("COREDEP"), when(col("FREPP") < 0.0).then(null.cast(Float64)).otherwise(col("FREPP")).alias("FREPP"), when(col("OTHBOR") < 0.0).then(null.cast(Float64)).otherwise(col("OTHBOR")).alias("OTHBOR")] 
+                                     WITH_COLUMNS:
+                                     [when(col("EQ") > col("ASSET")).then(null.cast(Float64)).otherwise(col("EQ")).alias("EQ")] 
+                                       WITH_COLUMNS:
+                                       [(((col("REPDTE").dt.year() * 4) + col("REPDTE").dt.quarter().cast(Int32)) - 1).alias("Q"), col("REPDTE").dt.year().strict_cast(Int16).alias("YEAR")] 
+                                         WITH_COLUMNS:
+                                         [col("REPDTE").str.strptime(["raise"])] 
+                                          FILTER col("ASSET") > 0.0
+                                          FROM
+                                            FILTER col("ASSET").is_not_null()
+                                            FROM
+                                              FILTER col("REPDTE").is_not_null()
+                                              FROM
+                                                FILTER col("CERT").is_not_null()
+                                                FROM
+                                                  Parquet SCAN [/home/user/fdic-ews/data/raw/financials/REPDTE=19840331/part-0.parquet, ... 169 other sources]
+                                                  PROJECT */41 COLUMNS
+                                                  ESTIMATED ROWS: 1740138
+                      RIGHT PLAN ON: [col("CERT")]
+                        AGGREGATE[maintain_order: false]
+                          [col("FAIL_DATE").min().alias("_FIRST_CLOSURE")] BY [col("CERT")]
+                          FROM
+                          FILTER col("RESTYPE") == "FAILURE"
+                          FROM
+                            SORT BY [col("FAIL_DATE")]
+                              UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT", "FAIL_DATE"])
+                                SELECT [col("CERT"), col("FAIL_DATE"), col("RESTYPE"), col("COST"), col("QBFASSET")]
+                                  FILTER col("FAIL_DATE") >= 1984-01-01
+                                  FROM
+                                    FILTER col("CERT").is_not_null()
+                                    FROM
+                                       WITH_COLUMNS:
+                                       [col("FAILDATE").str.strptime(["raise"]).alias("FAIL_DATE"), col("CERT").strict_cast(Int32), col("COST").cast(Float64), col("QBFASSET").cast(Float64)] 
+                                        Parquet SCAN [/home/user/fdic-ews/data/raw/failures.parquet]
+                                        PROJECT */11 COLUMNS
+                                        ESTIMATED ROWS: 4117
+                      END LEFT JOIN
+              RIGHT PLAN ON: [col("CERT")]
+                SELECT [col("CERT"), col("FAIL_DATE"), col("RESTYPE")]
+                  SORT BY [col("FAIL_DATE")]
+                    UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT", "FAIL_DATE"])
+                      SELECT [col("CERT"), col("FAIL_DATE"), col("RESTYPE"), col("COST"), col("QBFASSET")]
+                        FILTER col("FAIL_DATE") >= 1984-01-01
+                        FROM
+                          FILTER col("CERT").is_not_null()
+                          FROM
+                             WITH_COLUMNS:
+                             [col("FAILDATE").str.strptime(["raise"]).alias("FAIL_DATE"), col("CERT").strict_cast(Int32), col("COST").cast(Float64), col("QBFASSET").cast(Float64)] 
+                              Parquet SCAN [/home/user/fdic-ews/data/raw/failures.parquet]
+                              PROJECT */11 COLUMNS
+                              ESTIMATED ROWS: 4117
+              END INNER JOIN
+        END LEFT JOIN
+
+=== OPTIMISED PLAN ===
+SELECT [col("CERT"), col("REPDTE"), col("STNAME"), col("ASSET"), col("DEP"), col("DEPDOM"), col("EQ"), col("BRO"), col("CHBAL"), col("SC"), col("LNLSGR"), col("LNLSNET"), col("LNRE"), col("LNCI"), col("LNCON"), col("LNATRES"), col("NCLNLS"), col("P3ASSET"), col("P9ASSET"), col("NAASSET"), col("NTLNLS"), col("ORE"), col("NETINC"), col("INTINC"), col("EINTEXP"), col("NONII"), col("NONIX"), col("ELNATR"), col("ROA"), col("ROE"), col("NIMY"), col("RBC1AAJ"), col("RBCRWAJ"), col("LNRECONS"), col("LNRENRES"), col("LNREMULT"), col("LNRERES"), col("COREDEP"), col("FREPP"), col("OTHBOR"), col("INTAN"), col("Q"), col("YEAR"), col("NETINC_Q"), col("INTINC_Q"), col("EINTEXP_Q"), col("NONII_Q"), col("NONIX_Q"), col("ELNATR_Q"), col("NTLNLS_Q"), col("GAP_PREV_Q"), col("FAIL_DATE").alias("NEXT_FAIL_DATE"), col("RESTYPE").alias("NEXT_FAIL_TYPE"), col("y"), col("label_complete"), col("Q_TO_FAIL")]
+  simple π 56/56 ["CERT", "REPDTE", "STNAME", ... 53 other columns]
+    simple π 57/57 ["CERT", "REPDTE", "STNAME", ... 54 other columns]
+       WITH_COLUMNS:
+       [(col("FAIL_DATE").is_not_null() & (col("FAIL_DATE") <= col("_H"))).strict_cast(Int8).alias("y")] 
+         WITH_COLUMNS:
+         [col("REPDTE").dt.offset_by(["12mo"]).dt.month_end().alias("_H"), (col("REPDTE") <= 2025-06-30).alias("label_complete"), ((((col("FAIL_DATE").dt.year() * 4) + col("FAIL_DATE").dt.quarter().cast(Int32)) - 1) - col("Q")).alias("Q_TO_FAIL")] 
+          LEFT JOIN:
+          LEFT PLAN ON: [col("CERT"), col("REPDTE")]
+            CACHE[id: f584ad80-cfa5-4dc7-80d9-b0cdd54c7c61]
+              simple π 51/51 ["CERT", "REPDTE", "STNAME", ... 48 other columns]
+                FILTER (col("_FIRST_CLOSURE").is_null() | (col("REPDTE") < col("_FIRST_CLOSURE")))
+                FROM
+                  LEFT JOIN:
+                  LEFT PLAN ON: [col("CERT")]
+                     WITH_COLUMNS:
+                     [when(col("INTINC_Q") < 0.0).then(null.cast(Float64)).otherwise(col("INTINC_Q")).alias("INTINC_Q")] 
+                      simple π 51/51 ["CERT", "REPDTE", "STNAME", ... 48 other columns]
+                         WITH_COLUMNS:
+                         [when(col("__POLARS_CSER_0x100000044")).then(col("NETINC")).otherwise(when(((col("Q") - when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32))) == 1) & (col("__POLARS_CSER_0x10000004b") == (when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32)) // 4))).then(col("NETINC") - when(col("__POLARS_CSER_0x100000048")).then(col("NETINC").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NETINC_Q"), when(col("__POLARS_CSER_0x100000044")).then(col("INTINC")).otherwise(when(((col("Q") - when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32))) == 1) & (col("__POLARS_CSER_0x10000004b") == (when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32)) // 4))).then(col("INTINC") - when(col("__POLARS_CSER_0x100000048")).then(col("INTINC").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("INTINC_Q"), when(col("__POLARS_CSER_0x100000044")).then(col("EINTEXP")).otherwise(when(((col("Q") - when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32))) == 1) & (col("__POLARS_CSER_0x10000004b") == (when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32)) // 4))).then(col("EINTEXP") - when(col("__POLARS_CSER_0x100000048")).then(col("EINTEXP").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("EINTEXP_Q"), when(col("__POLARS_CSER_0x100000044")).then(col("NONII")).otherwise(when(((col("Q") - when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32))) == 1) & (col("__POLARS_CSER_0x10000004b") == (when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32)) // 4))).then(col("NONII") - when(col("__POLARS_CSER_0x100000048")).then(col("NONII").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NONII_Q"), when(col("__POLARS_CSER_0x100000044")).then(col("NONIX")).otherwise(when(((col("Q") - when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32))) == 1) & (col("__POLARS_CSER_0x10000004b") == (when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32)) // 4))).then(col("NONIX") - when(col("__POLARS_CSER_0x100000048")).then(col("NONIX").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NONIX_Q"), when(col("__POLARS_CSER_0x100000044")).then(col("ELNATR")).otherwise(when(((col("Q") - when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32))) == 1) & (col("__POLARS_CSER_0x10000004b") == (when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32)) // 4))).then(col("ELNATR") - when(col("__POLARS_CSER_0x100000048")).then(col("ELNATR").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("ELNATR_Q"), when(col("__POLARS_CSER_0x100000044")).then(col("NTLNLS")).otherwise(when(((col("Q") - when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32))) == 1) & (col("__POLARS_CSER_0x10000004b") == (when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32)) // 4))).then(col("NTLNLS") - when(col("__POLARS_CSER_0x100000048")).then(col("NTLNLS").shift([dyn int: 1])).otherwise(null.cast(Float64))).otherwise(null.cast(Float64))).alias("NTLNLS_Q"), (col("Q") - when(col("__POLARS_CSER_0x100000048")).then(col("__POLARS_CSER_0x10000004a")).otherwise(null.cast(Int32))).alias("GAP_PREV_Q")] 
+                           WITH_COLUMNS:
+                           [(col("REPDTE").dt.quarter() == 1).alias("__POLARS_CSER_0x100000044"), (col("CERT") == col("CERT").shift([dyn int: 1])).alias("__POLARS_CSER_0x100000048"), col("Q").shift([dyn int: 1]).alias("__POLARS_CSER_0x10000004a"), (col("Q") // 4).alias("__POLARS_CSER_0x10000004b")] 
+                            FILTER (((col("CERT") == col("CERT").shift([dyn int: 1])) & (col("Q") == col("Q").shift([dyn int: 1])))).fill_null([false]).not()
+                            FROM
+                              SORT BY [col("CERT"), col("Q")]
+                                simple π 43/43 ["CERT", "REPDTE", "STNAME", ... 40 other columns]
+                                   WITH_COLUMNS:
+                                   [(((col("__POLARS_CSER_0x10000003c") * 4) + col("REPDTE").dt.quarter().cast(Int32)) - 1).alias("Q"), col("__POLARS_CSER_0x10000003c").strict_cast(Int16).alias("YEAR")] 
+                                     WITH_COLUMNS:
+                                     [col("REPDTE").dt.year().alias("__POLARS_CSER_0x10000003c")] 
+                                       WITH_COLUMNS:
+                                       [col("REPDTE").str.strptime(["raise"]), when(col("EQ") > col("ASSET")).then(null.cast(Float64)).otherwise(col("EQ")).alias("EQ"), when(col("DEP") < 0.0).then(null.cast(Float64)).otherwise(col("DEP")).alias("DEP"), when(col("LNLSGR") < 0.0).then(null.cast(Float64)).otherwise(col("LNLSGR")).alias("LNLSGR"), when(col("CHBAL") < 0.0).then(null.cast(Float64)).otherwise(col("CHBAL")).alias("CHBAL"), when(col("SC") < 0.0).then(null.cast(Float64)).otherwise(col("SC")).alias("SC"), when(col("LNATRES") < 0.0).then(null.cast(Float64)).otherwise(col("LNATRES")).alias("LNATRES"), when(col("NCLNLS") < 0.0).then(null.cast(Float64)).otherwise(col("NCLNLS")).alias("NCLNLS"), when(col("ORE") < 0.0).then(null.cast(Float64)).otherwise(col("ORE")).alias("ORE"), when(col("BRO") < 0.0).then(null.cast(Float64)).otherwise(col("BRO")).alias("BRO"), when(col("DEPDOM") < 0.0).then(null.cast(Float64)).otherwise(col("DEPDOM")).alias("DEPDOM"), when(col("LNRE") < 0.0).then(null.cast(Float64)).otherwise(col("LNRE")).alias("LNRE"), when(col("LNCI") < 0.0).then(null.cast(Float64)).otherwise(col("LNCI")).alias("LNCI"), when(col("LNCON") < 0.0).then(null.cast(Float64)).otherwise(col("LNCON")).alias("LNCON"), when(col("P3ASSET") < 0.0).then(null.cast(Float64)).otherwise(col("P3ASSET")).alias("P3ASSET"), when(col("P9ASSET") < 0.0).then(null.cast(Float64)).otherwise(col("P9ASSET")).alias("P9ASSET"), when(col("NAASSET") < 0.0).then(null.cast(Float64)).otherwise(col("NAASSET")).alias("NAASSET"), when(col("INTAN") < 0.0).then(null.cast(Float64)).otherwise(col("INTAN")).alias("INTAN"), when(col("LNRECONS") < 0.0).then(null.cast(Float64)).otherwise(col("LNRECONS")).alias("LNRECONS"), when(col("LNRENRES") < 0.0).then(null.cast(Float64)).otherwise(col("LNRENRES")).alias("LNRENRES"), when(col("LNREMULT") < 0.0).then(null.cast(Float64)).otherwise(col("LNREMULT")).alias("LNREMULT"), when(col("LNRERES") < 0.0).then(null.cast(Float64)).otherwise(col("LNRERES")).alias("LNRERES"), when(col("COREDEP") < 0.0).then(null.cast(Float64)).otherwise(col("COREDEP")).alias("COREDEP"), when(col("FREPP") < 0.0).then(null.cast(Float64)).otherwise(col("FREPP")).alias("FREPP"), when(col("OTHBOR") < 0.0).then(null.cast(Float64)).otherwise(col("OTHBOR")).alias("OTHBOR"), when(col("RBC1AAJ") == 0.0).then(null.cast(Float64)).otherwise(col("RBC1AAJ")).alias("RBC1AAJ"), when(col("RBCRWAJ") == 0.0).then(null.cast(Float64)).otherwise(col("RBCRWAJ")).alias("RBCRWAJ")] 
+                                        Parquet SCAN [/home/user/fdic-ews/data/raw/financials/REPDTE=19840331/part-0.parquet, ... 169 other sources]
+                                        PROJECT */41 COLUMNS
+                                        SELECTION: (((col("ASSET").is_not_null() & (col("ASSET") > 0.0)) & col("CERT").is_not_null()) & col("REPDTE").is_not_null())
+                                        ESTIMATED ROWS: 1740138
+                  RIGHT PLAN ON: [col("CERT")]
+                    AGGREGATE[maintain_order: false]
+                      [col("FAIL_DATE").min().alias("_FIRST_CLOSURE")] BY [col("CERT")]
+                      FROM
+                      UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT", "FAIL_DATE"])
+                        FILTER (col("CERT").is_not_null() & (col("FAIL_DATE") >= 1984-01-01))
+                        FROM
+                          simple π 2/2 ["CERT", "FAIL_DATE"]
+                             WITH_COLUMNS:
+                             [col("FAILDATE").str.strptime(["raise"]).alias("FAIL_DATE"), col("CERT").strict_cast(Int32)] 
+                              simple π 2/2 ["CERT", "FAILDATE"]
+                                Parquet SCAN [/home/user/fdic-ews/data/raw/failures.parquet]
+                                PROJECT 3/11 COLUMNS
+                                SELECTION: col("RESTYPE") == "FAILURE"
+                                ESTIMATED ROWS: 4117
+                  END LEFT JOIN
+          RIGHT PLAN ON: [col("CERT"), col("REPDTE")]
+            AGGREGATE[maintain_order: false]
+              [col("FAIL_DATE").min(), col("RESTYPE").min_by[total, nulls_smallest]([col("FAIL_DATE")])] BY [col("CERT"), col("REPDTE")]
+              FROM
+              INNER JOIN:
+              FUSED PREDICATE: col("FAIL_DATE") > col("REPDTE")
+              LEFT PLAN ON: [col("CERT")]
+                simple π 2/2 ["CERT", "REPDTE"]
+                  CACHE[id: f584ad80-cfa5-4dc7-80d9-b0cdd54c7c61]
+              RIGHT PLAN ON: [col("CERT")]
+                UNIQUE[maintain_order: false, keep_strategy: Any] BY Some(["CERT", "FAIL_DATE"])
+                  FILTER (col("CERT").is_not_null() & (col("FAIL_DATE") >= 1984-01-01))
+                  FROM
+                    simple π 3/3 ["CERT", "FAIL_DATE", "RESTYPE"]
+                       WITH_COLUMNS:
+                       [col("FAILDATE").str.strptime(["raise"]).alias("FAIL_DATE"), col("CERT").strict_cast(Int32)] 
+                        Parquet SCAN [/home/user/fdic-ews/data/raw/failures.parquet]
+                        PROJECT 3/11 COLUMNS
+                        ESTIMATED ROWS: 4117
+              END INNER JOIN
+          END LEFT JOIN

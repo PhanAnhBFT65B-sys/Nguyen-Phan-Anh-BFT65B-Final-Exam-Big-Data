@@ -1,0 +1,17 @@
+{
+ "features_used": 35,
+ "features_dropped_all_null_in_train": [
+  "pd30_ta"
+ ],
+ "train_rows": 481235,
+ "train_pos": 8757,
+ "val_rows": 57011,
+ "val_pos": 386,
+ "spark_pr_auc": 0.19444019191911435,
+ "spark_roc_auc": 0.9739518008898643,
+ "spark_fit_s": 38.82,
+ "sklearn_pr_auc": 0.2841526427896081,
+ "sklearn_roc_auc": 0.9768196365050499,
+ "sklearn_fit_s": 8.67,
+ "note": "Differences vs sklearn: no winsorising and no missing-indicator columns in the Spark pipeline; Spark areaUnderPR uses trapezoidal interpolation; sklearn average_precision uses step-wise sums, so small differences are expected. Spark version 4.3.0"
+}
